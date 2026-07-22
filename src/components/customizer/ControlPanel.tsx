@@ -169,18 +169,20 @@ export function ControlPanel(props: {
                 <div>
                   <div className="mb-1 flex items-center justify-between text-xs uppercase tracking-widest">
                     <span>{t("logo_size")}</span>
-                    <span className="font-semibold">{props.logoSize}%</span>
+                    <span className="font-semibold">{props.logoSize} px</span>
                   </div>
                   <input
                     type="range"
                     min={10}
-                    max={38}
+                    max={60}
                     step={1}
                     value={props.logoSize}
                     onChange={(e) => props.setLogoSize(Number(e.target.value))}
                     className="w-full accent-foreground"
                   />
-                  <p className="mt-1 text-xs text-muted-foreground">{t("image_surcharge")}</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Precio por tamaño: 0–20 px 1 € · 21–30 px 1,50 € · 31–40 px 2 € · 41–50 px 2,50 € · 51–60 px 3 €
+                  </p>
                 </div>
               </div>
             )}
@@ -244,7 +246,7 @@ export function ControlPanel(props: {
           <div>
             <div className="mb-1 flex items-center justify-between text-xs uppercase tracking-widest">
               <span>{t("text_size")}</span>
-              <span className="font-semibold">{props.textSize}</span>
+              <span className="font-semibold">{props.textSize} px</span>
             </div>
             <input
               type="range"
@@ -255,11 +257,10 @@ export function ControlPanel(props: {
               onChange={(e) => props.setTextSize(Number(e.target.value))}
               className="w-full accent-foreground"
             />
-            <p className="mt-1 text-xs text-muted-foreground">{t("text_on_sleeves")}</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Precio por tamaño: 0–20 px 1 € · 21–30 px 1,50 € · 31–40 px 2 € · 41–50 px 2,50 € · 51–60 px 3 €
+            </p>
           </div>
-          {props.customText && (
-            <p className="text-xs text-muted-foreground">{t("text_surcharge")}</p>
-          )}
         </TabsContent>
       </Tabs>
     </div>

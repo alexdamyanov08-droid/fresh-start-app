@@ -14,12 +14,12 @@ export const Route = createFileRoute("/aviso-legal")({
       <section className="mt-10 space-y-3 text-sm leading-relaxed text-foreground/80">
         <h2 className="font-display text-xl uppercase text-brand">Información del titular</h2>
         <ul className="space-y-1">
-          <li><strong>Nombre o razón social:</strong> [Nombre de la empresa]</li>
-          <li><strong>CIF/NIF:</strong> [CIF/NIF]</li>
-          <li><strong>Domicilio social:</strong> [Dirección completa]</li>
-          <li><strong>Código Postal:</strong> [Código Postal]</li>
-          <li><strong>Ciudad:</strong> [Ciudad]</li>
-          <li><strong>Provincia:</strong> [Provincia]</li>
+          <li><strong>Nombre o razón social:</strong> Protex Wear, S.L.</li>
+          <li><strong>CIF/NIF:</strong> B72983661</li>
+          <li><strong>Domicilio social:</strong> Calle de la Letra L, Nº 6, Nave 1 – Pol. Ind. Malpica</li>
+          <li><strong>Código Postal:</strong> 50016</li>
+          <li><strong>Ciudad:</strong> Zaragoza</li>
+          <li><strong>Provincia:</strong> Zaragoza</li>
           <li><strong>País:</strong> España</li>
           <li><strong>Correo electrónico:</strong> pedidos@xprintwear.es</li>
           <li><strong>Teléfono:</strong> 876 44 12 75</li>
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/aviso-legal")({
         <h2 className="font-display text-xl uppercase text-brand">Propiedad intelectual</h2>
         <p>
           Todos los contenidos del sitio web (textos, imágenes, logotipos, diseños, código fuente y
-          demás elementos) son propiedad de [Nombre de la empresa] o de sus respectivos titulares y
+          demás elementos) son propiedad de Protex Wear, S.L. o de sus respectivos titulares y
           están protegidos por la legislación sobre propiedad intelectual e industrial.
         </p>
       </section>
