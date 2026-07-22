@@ -1,10 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Shirt, Pencil, Users, Truck, BadgeCheck, Monitor, ShoppingCart, FileCheck, PackageCheck } from "lucide-react";
-import bannerSuperior from "@/assets/xprint/banner_superior.png.asset.json";
-import camisetaImg from "@/assets/xprint/camiseta.jpg";
-import sudaderaImg from "@/assets/xprint/sudadera.png.asset.json";
-import poloImg from "@/assets/xprint/polo.png.asset.json";
-import softshellImg from "@/assets/xprint/softshell.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,10 +14,10 @@ export const Route = createFileRoute("/")({
 });
 
 const CATEGORIES = [
-  { label: "Camisetas", img: camisetaImg },
-  { label: "Sudaderas", img: sudaderaImg.url },
-  { label: "Polos", img: poloImg.url },
-  { label: "Softshells", img: softshellImg },
+  { label: "Camisetas", img: "/camiseta.jpg" },
+  { label: "Sudaderas", img: "/sudadera.png" },
+  { label: "Polos", img: "/polo.png" },
+  { label: "Softshells", img: "/softshell.jpg" },
 ];
 
 const FEATURES = [
@@ -74,7 +69,7 @@ function Home() {
 
           <div className="relative overflow-hidden rounded-2xl">
             <img
-              src={bannerSuperior.url}
+              src="/banner_superior.png"
               alt="Grupos con prendas personalizadas por XPRINTWEAR"
               className="h-full w-full object-cover"
               width={1600}
