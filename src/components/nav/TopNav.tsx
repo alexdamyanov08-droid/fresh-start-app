@@ -3,7 +3,7 @@ import { ShoppingBag, User as UserIcon, ChevronDown, Sparkles, Truck, Clock, Lan
 import { useState, useRef, useEffect } from "react";
 import { useCart } from "@/lib/cart-store";
 import { useAuth } from "@/lib/auth-context";
-import logoAsset from "@/assets/xprint/logo_horizontal.png.asset.json";
+
 
 declare global {
   interface Window {
@@ -114,7 +114,7 @@ export function TopNav() {
       <div className="border-b border-border bg-background">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link to="/" className="shrink-0">
-            <img src={logoAsset.url} alt="XPRINTWEAR" className="h-16 w-auto sm:h-20" />
+            <img src="/logo-horizontal.png" alt="XPRINTWEAR" className="h-16 w-auto sm:h-20" />
           </Link>
 
           <ul className="hidden items-center gap-10 md:flex">

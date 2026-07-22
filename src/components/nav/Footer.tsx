@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, Phone, MapPin } from "lucide-react";
-import logo1 from "@/assets/xprint/logo_1.png.asset.json";
+
 
 const CATS = ["Camisetas", "Sudaderas", "Polos", "Softshells"];
 
@@ -10,7 +10,7 @@ export function Footer() {
       <div className="border-t border-border bg-background">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
           <div>
-            <img src={logo1.url} alt="XPRINTWEAR" className="h-24 w-auto" />
+            <img src="/logo.png" alt="XPRINTWEAR" className="h-24 w-auto" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Personalización textil y merchandising para grupos, eventos, peñas y ocasiones especiales.
             </p>
