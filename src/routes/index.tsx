@@ -69,7 +69,7 @@ function Home() {
 
           <div className="relative overflow-hidden rounded-2xl">
             <img
-              src={bannerSuperior.url}
+              src="/banner_superior.png"
               alt="Grupos con prendas personalizadas por XPRINTWEAR"
               className="h-full w-full object-cover"
               width={1600}
