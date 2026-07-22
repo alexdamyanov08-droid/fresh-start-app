@@ -74,23 +74,33 @@ function ProductPage() {
     if (edit && !editing) nav({ to: "/product/$code", params: { code: p.code }, search: {}, replace: true });
   }, [edit, editing, nav, p.code]);
 
+  // Personalization price tiers (per element, based on pixel size)
+  // 0-20 px: 1€ · 21-30: 1,50€ · 31-40: 2€ · 41-50: 2,50€ · 51-60: 3€
+  const priceForPixels = (px: number) => {
+    if (px <= 20) return 1;
+    if (px <= 30) return 1.5;
+    if (px <= 40) return 2;
+    if (px <= 50) return 2.5;
+    return 3;
+  };
+
   const imageSurcharge = useMemo(
-    () => (logoImage ? Math.round(6 + logoSize * 0.5) : 0),
+    () => (logoImage ? priceForPixels(logoSize) : 0),
     [logoImage, logoSize],
   );
 
   const textSurcharge = useMemo(
-    () => (customText ? Math.round(4 + customText.length * 0.4 + textSize * 0.2) : 0),
+    () => (customText ? priceForPixels(textSize) : 0),
     [customText, textSize],
   );
 
   const unitPrice = useMemo(() => {
     let x = p.price;
-    if (logoPos) x += 8;
+    if (logoPos && !logoImage) x += priceForPixels(logoSize);
     x += textSurcharge;
     x += imageSurcharge;
     return x;
-  }, [p.price, logoPos, textSurcharge, imageSurcharge]);
+  }, [p.price, logoPos, logoImage, logoSize, textSurcharge, imageSurcharge]);
   const totalPrice = unitPrice * qty;
 
   const summary = `${t("summary_size")} ${size} · ${color.name}${customText ? ` · ${t("summary_text")}: "${customText}"` : ""}${logoPos ? ` · ${t("logo_label")}` : ""}${logoImage ? ` · ${t("custom_image")} (${logoSize}%)` : ""}`;

@@ -14,8 +14,9 @@ export const Route = createFileRoute("/privacidad")({
       <section className="mt-10 space-y-3 text-sm leading-relaxed text-foreground/80">
         <h2 className="font-display text-xl uppercase text-brand">Responsable del tratamiento</h2>
         <ul className="space-y-1">
-          <li><strong>Empresa:</strong> [Nombre de la empresa]</li>
-          <li><strong>CIF/NIF:</strong> [CIF/NIF]</li>
+          <li><strong>Empresa:</strong> Protex Wear, S.L.</li>
+          <li><strong>CIF/NIF:</strong> B72983661</li>
+          <li><strong>Domicilio social:</strong> Calle de la Letra L, Nº 6, Nave 1 – Pol. Ind. Malpica, 50016 Zaragoza</li>
           <li><strong>Correo electrónico:</strong> pedidos@xprintwear.es</li>
         </ul>
       </section>
