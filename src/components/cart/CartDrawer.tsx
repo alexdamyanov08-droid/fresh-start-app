@@ -60,14 +60,13 @@ export function CartDrawer() {
                     <p className="text-xs text-muted-foreground">
                       {t("summary_size")} {i.size} · {i.colorName} · {t("summary_qty")} {i.qty}
                     </p>
-                    {i.customText && (
-                      <p className="text-xs text-muted-foreground">
-                        {t("summary_text")}: "{i.customText}"
+                    {i.elements.filter((el) => el.kind === "text" && el.text).map((el) => (
+                      <p key={el.id} className="text-xs text-muted-foreground">
+                        {t("summary_text")}: "{el.text}"
                       </p>
-                    )}
-                    {i.logoPlacement && (
-
-                      <p className="text-xs text-muted-foreground">{t("logo_label")}: {i.logoPlacement}</p>
+                    ))}
+                    {i.elements.some((el) => el.kind === "image") && (
+                      <p className="text-xs text-muted-foreground">{t("logo_label")}</p>
                     )}
                     <p className="mt-auto text-sm font-semibold">
                       €{(unitPrice(i) * i.qty).toFixed(2)}
