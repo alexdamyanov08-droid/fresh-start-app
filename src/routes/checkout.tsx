@@ -241,9 +241,9 @@ function CheckoutPage() {
                       <p className="mt-0.5 text-[11px] text-muted-foreground">
                         {i.size} · {i.colorName}
                       </p>
-                      {i.customText && (
-                        <p className="text-[11px] text-muted-foreground">"{i.customText}"</p>
-                      )}
+                      {i.elements.filter((el) => el.kind === "text" && el.text).map((el) => (
+                        <p key={el.id} className="text-[11px] text-muted-foreground">"{el.text}"</p>
+                      ))}
                     </div>
                     <p className="whitespace-nowrap text-sm font-semibold">
                       €{(unitPrice(i) * i.qty).toFixed(2)}
