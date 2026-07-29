@@ -6,8 +6,8 @@ import { toast } from "sonner";
 import { getProduct, getVariant, products } from "@/data/products";
 import { Viewer, type View } from "@/components/customizer/Viewer";
 import { ControlPanel } from "@/components/customizer/ControlPanel";
-import { useCart } from "@/lib/cart-store";
-import { basePriceForVariant } from "@/lib/pricing";
+import { useCart, type DesignElement } from "@/lib/cart-store";
+import { basePriceForVariant, surchargeOf } from "@/lib/pricing";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/product/$code")({
@@ -60,50 +60,42 @@ function ProductPage() {
 
   const [qty, setQty] = useState(editing?.qty ?? 1);
   const [view, setView] = useState<View>("front");
-  const [logoPos, setLogoPos] = useState<string | null>(editing?.logoPlacement ?? null);
-  const [logoImage, setLogoImage] = useState<string | null>(null);
-  const [logoSize, setLogoSize] = useState(20);
-  const [customText, setCustomText] = useState(editing?.customText ?? "");
-  const [textFont, setTextFont] = useState(editing?.textFont ?? "brutal");
-  const [textColor, setTextColor] = useState(editing?.textColor ?? "#0a0a0a");
-  const [textSize, setTextSize] = useState(24);
-  const [overlayPos, setOverlayPos] = useState({ x: 0, y: -10 });
-  const [editMode, setEditMode] = useState(false);
+  const [elements, setElements] = useState<DesignElement[]>(editing?.elements ?? []);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   // If ?edit points to an item that no longer exists, drop the param
   useEffect(() => {
     if (edit && !editing) nav({ to: "/product/$code", params: { code: p.code }, search: {}, replace: true });
   }, [edit, editing, nav, p.code]);
 
-  // Personalization price tiers (per element, based on pixel size)
-  // 0-20 px: 1€ · 21-30: 1,50€ · 31-40: 2€ · 41-50: 2,50€ · 51-60: 3€
-  const priceForPixels = (px: number) => {
-    if (px <= 20) return 1;
-    if (px <= 30) return 1.5;
-    if (px <= 40) return 2;
-    if (px <= 50) return 2.5;
-    return 3;
+  const addImage = (dataUrl: string) => {
+    const el: DesignElement = {
+      id: crypto.randomUUID(), kind: "image", image: dataUrl,
+      size: 25, pos: { x: 0, y: -10 },
+    };
+    setElements((prev) => [...prev, el]);
+    setSelectedId(el.id);
   };
 
-  const imageSurcharge = useMemo(
-    () => (logoImage ? priceForPixels(logoSize) : 0),
-    [logoImage, logoSize],
-  );
+  const addText = () => {
+    const el: DesignElement = {
+      id: crypto.randomUUID(), kind: "text", text: "", font: "brutal", color: "#0a0a0a",
+      size: 24, pos: { x: 0, y: -10 },
+    };
+    setElements((prev) => [...prev, el]);
+    setSelectedId(el.id);
+  };
 
-  const textSurcharge = useMemo(
-    () => (customText ? priceForPixels(textSize) : 0),
-    [customText, textSize],
-  );
+  const updateElement = (id: string, patch: Partial<DesignElement>) =>
+    setElements((prev) => prev.map((el) => (el.id === id ? { ...el, ...patch } : el)));
+
+  const removeElement = (id: string) => {
+    setElements((prev) => prev.filter((el) => el.id !== id));
+    setSelectedId((sel) => (sel === id ? null : sel));
+  };
 
   const variant = useMemo(() => getVariant(p, size, color.name), [p, size, color.name]);
-
-  const surcharge = useMemo(() => {
-    let x = 0;
-    if (logoPos && !logoImage) x += priceForPixels(logoSize);
-    x += textSurcharge;
-    x += imageSurcharge;
-    return x;
-  }, [logoPos, logoImage, logoSize, textSurcharge, imageSurcharge]);
+  const surcharge = useMemo(() => surchargeOf(elements), [elements]);
 
   // Unidades de esta MISMA referencia ya en el carrito (sin contar la línea que
   // se está editando), más las que se van a añadir ahora: eso decide el tramo.
@@ -114,16 +106,16 @@ function ProductPage() {
   const unitPrice = basePrice + surcharge;
   const totalPrice = unitPrice * qty;
 
-  const summary = `${t("summary_size")} ${size} · ${color.name}${customText ? ` · ${t("summary_text")}: "${customText}"` : ""}${logoPos ? ` · ${t("logo_label")}` : ""}${logoImage ? ` · ${t("custom_image")} (${logoSize}%)` : ""}`;
+  const texts = elements.filter((el) => el.kind === "text" && el.text).map((el) => el.text);
+  const hasImage = elements.some((el) => el.kind === "image");
+  const summary = `${t("summary_size")} ${size} · ${color.name}${texts.length ? ` · ${t("summary_text")}: "${texts.join(", ")}"` : ""}${hasImage ? ` · ${t("logo_label")}` : ""}`;
 
   const onAdd = () => {
     const payload = {
       code: p.code, name: p.name, image: color.image, size,
       colorName: color.name, colorHex: color.hex, qty,
       tiers: variant?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
-      surcharge,
-      logoPlacement: logoPos, customText: customText || null,
-      textFont: customText ? textFont : null, textColor: customText ? textColor : null,
+      elements,
     };
     if (isEdit && editing) {
       update(editing.id, payload);
@@ -155,12 +147,11 @@ function ProductPage() {
       <div className="grid gap-8 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <div className="h-[70vh] min-h-[420px] md:sticky md:top-20 md:h-[calc(100vh-8rem)]">
           <Viewer
+            productCode={p.code}
             color={color} view={view} setView={setView}
-            logoPos={logoPos} logoImage={logoImage} logoSize={logoSize}
-            customText={customText}
-            textColor={textColor} textFont={textFont} textSize={textSize}
-            overlayPos={overlayPos} setOverlayPos={setOverlayPos}
-            editMode={editMode} setEditMode={setEditMode}
+            elements={elements}
+            selectedId={selectedId} setSelectedId={setSelectedId}
+            updateElement={updateElement} removeElement={removeElement}
           />
         </div>
 
@@ -169,13 +160,10 @@ function ProductPage() {
           size={size} setSize={setSize}
           color={color} setColor={setColor}
           qty={qty} setQty={setQty}
-          logoPos={logoPos} setLogoPos={setLogoPos}
-          logoImage={logoImage} setLogoImage={setLogoImage}
-          logoSize={logoSize} setLogoSize={setLogoSize}
-          customText={customText} setCustomText={setCustomText}
-          textFont={textFont} setTextFont={setTextFont}
-          textColor={textColor} setTextColor={setTextColor}
-          textSize={textSize} setTextSize={setTextSize}
+          elements={elements}
+          selectedId={selectedId} setSelectedId={setSelectedId}
+          addImage={addImage} addText={addText}
+          updateElement={updateElement} removeElement={removeElement}
           totalPrice={totalPrice}
         />
       </div>
