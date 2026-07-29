@@ -26,7 +26,7 @@ export const Route = createFileRoute("/checkout")({
 
 function CheckoutPage() {
   const { t } = useI18n();
-  const { items, total, clear } = useCart();
+  const { items, total, clear, unitPrice } = useCart();
   const { addOrder } = useOrders();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -246,7 +246,7 @@ function CheckoutPage() {
                       )}
                     </div>
                     <p className="whitespace-nowrap text-sm font-semibold">
-                      €{(i.unitPrice * i.qty).toFixed(2)}
+                      €{(unitPrice(i) * i.qty).toFixed(2)}
                     </p>
                   </li>
                 ))}
