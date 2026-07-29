@@ -6,7 +6,7 @@ import { useNavigate } from "@tanstack/react-router";
 
 
 export function CartDrawer() {
-  const { items, remove, total, open, setOpen, count } = useCart();
+  const { items, remove, total, open, setOpen, count, unitPrice } = useCart();
   const { t } = useI18n();
   const navigate = useNavigate();
 
@@ -70,7 +70,7 @@ export function CartDrawer() {
                       <p className="text-xs text-muted-foreground">{t("logo_label")}: {i.logoPlacement}</p>
                     )}
                     <p className="mt-auto text-sm font-semibold">
-                      €{(i.unitPrice * i.qty).toFixed(2)}
+                      €{(unitPrice(i) * i.qty).toFixed(2)}
                     </p>
                   </div>
                 </li>
