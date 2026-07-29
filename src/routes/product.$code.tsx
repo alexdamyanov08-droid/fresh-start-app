@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { getProduct, products } from "@/data/products";
+import { getProduct, getVariant, products } from "@/data/products";
 import { Viewer, type View } from "@/components/customizer/Viewer";
 import { ControlPanel } from "@/components/customizer/ControlPanel";
 import { useCart } from "@/lib/cart-store";
+import { basePriceForVariant } from "@/lib/pricing";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/product/$code")({
@@ -94,13 +95,23 @@ function ProductPage() {
     [customText, textSize],
   );
 
-  const unitPrice = useMemo(() => {
-    let x = p.price;
+  const variant = useMemo(() => getVariant(p, size, color.name), [p, size, color.name]);
+
+  const surcharge = useMemo(() => {
+    let x = 0;
     if (logoPos && !logoImage) x += priceForPixels(logoSize);
     x += textSurcharge;
     x += imageSurcharge;
     return x;
-  }, [p.price, logoPos, logoImage, logoSize, textSurcharge, imageSurcharge]);
+  }, [logoPos, logoImage, logoSize, textSurcharge, imageSurcharge]);
+
+  // Unidades de esta MISMA referencia ya en el carrito (sin contar la línea que
+  // se está editando), más las que se van a añadir ahora: eso decide el tramo.
+  const qtyAlreadyInCartForRef = items.reduce(
+    (s, i) => (i.code === p.code && i.id !== editing?.id ? s + i.qty : s), 0,
+  );
+  const basePrice = variant ? basePriceForVariant(variant.tiers, qtyAlreadyInCartForRef + qty) : p.price;
+  const unitPrice = basePrice + surcharge;
   const totalPrice = unitPrice * qty;
 
   const summary = `${t("summary_size")} ${size} · ${color.name}${customText ? ` · ${t("summary_text")}: "${customText}"` : ""}${logoPos ? ` · ${t("logo_label")}` : ""}${logoImage ? ` · ${t("custom_image")} (${logoSize}%)` : ""}`;
@@ -108,7 +119,9 @@ function ProductPage() {
   const onAdd = () => {
     const payload = {
       code: p.code, name: p.name, image: color.image, size,
-      colorName: color.name, colorHex: color.hex, qty, unitPrice,
+      colorName: color.name, colorHex: color.hex, qty,
+      tiers: variant?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
+      surcharge,
       logoPlacement: logoPos, customText: customText || null,
       textFont: customText ? textFont : null, textColor: customText ? textColor : null,
     };
