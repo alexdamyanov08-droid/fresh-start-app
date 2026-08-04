@@ -5,6 +5,7 @@ import { Package, Sparkles, User as UserIcon, ShoppingBag, LogOut, Mail, Calenda
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
 import { useOrders } from "@/lib/orders-store";
+import { unitPriceOf } from "@/lib/cart-store";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/account")({
@@ -180,7 +181,7 @@ function AccountPage() {
                             {i.size} · {i.colorName} · Qty {i.qty}
                           </p>
                         </div>
-                        <p className="whitespace-nowrap text-sm font-medium">€{(i.unitPrice * i.qty).toFixed(2)}</p>
+                        <p className="whitespace-nowrap text-sm font-medium">€{(unitPriceOf(o.items, i) * i.qty).toFixed(2)}</p>
                       </li>
                     ))}
                   </ul>

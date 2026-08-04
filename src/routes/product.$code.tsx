@@ -59,6 +59,14 @@ function ProductPage() {
   );
 
   const [qty, setQty] = useState(editing?.qty ?? 1);
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const setQuantity = (s: string, n: number) => setQuantities((prev) => ({ ...prev, [s]: n }));
+  const [roster, setRoster] = useState<{ id: string; name: string; number: string; size: string }[]>([]);
+  const addRosterEntry = (name: string, number: string, sz: string) => {
+    if (!name.trim()) return;
+    setRoster((prev) => [...prev, { id: crypto.randomUUID(), name: name.trim(), number: number.trim(), size: sz }]);
+  };
+  const removeRosterEntry = (id: string) => setRoster((prev) => prev.filter((r) => r.id !== id));
   const [view, setView] = useState<View>("front");
   const [elements, setElements] = useState<DesignElement[]>(editing?.elements ?? []);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -97,6 +105,24 @@ function ProductPage() {
   const variant = useMemo(() => getVariant(p, size, color.name), [p, size, color.name]);
   const surcharge = useMemo(() => surchargeOf(elements), [elements]);
 
+  // Agrupa las tallas que comparten exactamente los mismos precios por tramo de cantidad
+  // PARA EL COLOR SELECCIONADO (el color a veces sí cambia el precio, según el artículo),
+  // para la tabla desplegable de precios.
+  const priceGroups = useMemo(() => {
+    const map = new Map<string, { tiers: any; sizes: string[] }>();
+    for (const s of p.sizes) {
+      const v = getVariant(p, s, color.name);
+      if (!v) continue;
+      const key = JSON.stringify(v.tiers);
+      if (!map.has(key)) map.set(key, { tiers: v.tiers, sizes: [] });
+      map.get(key)!.sizes.push(s);
+    }
+    return Array.from(map.values()).map((g) => ({
+      label: g.sizes.length > 3 ? `${g.sizes[0]}–${g.sizes[g.sizes.length - 1]}` : g.sizes.join(", "),
+      tiers: g.tiers,
+    }));
+  }, [p, color.name]);
+
   // Unidades de esta MISMA referencia ya en el carrito (sin contar la línea que
   // se está editando), más las que se van a añadir ahora: eso decide el tramo.
   const qtyAlreadyInCartForRef = items.reduce(
@@ -104,29 +130,96 @@ function ProductPage() {
   );
   const basePrice = variant ? basePriceForVariant(variant.tiers, qtyAlreadyInCartForRef + qty) : p.price;
   const unitPrice = basePrice + surcharge;
-  const totalPrice = unitPrice * qty;
+
+  // Suma de unidades elegidas entre todas las tallas (mostrador + nombres de amigos),
+  // solo aplica cuando NO se está editando una línea.
+  const totalQtyAllSizes = Object.values(quantities).reduce((s, n) => s + (n || 0), 0) + roster.length;
+  const totalPriceAllSizes =
+    Object.entries(quantities).reduce((sum, [sz, n]) => {
+      if (!n) return sum;
+      const v = getVariant(p, sz, color.name);
+      const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
+      return sum + (bp + surcharge) * n;
+    }, 0) +
+    roster.reduce((sum, r) => {
+      const v = getVariant(p, r.size, color.name);
+      const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
+      return sum + (bp + surcharge);
+    }, 0);
+
+  const totalPrice = isEdit ? unitPrice * qty : totalPriceAllSizes;
+
+  // Desglose detallado: talla (o nombre), cantidad, precio unitario y subtotal de cada línea elegida.
+  const breakdown = [
+    ...Object.entries(quantities)
+      .filter(([, n]) => n > 0)
+      .map(([sz, n]) => {
+        const v = getVariant(p, sz, color.name);
+        const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
+        const unit = bp + surcharge;
+        return { label: sz, qty: n, unit, subtotal: unit * n };
+      }),
+    ...roster.map((r) => {
+      const v = getVariant(p, r.size, color.name);
+      const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
+      const unit = bp + surcharge;
+      return { label: `${r.name}${r.number ? " · " + r.number : ""} (${r.size})`, qty: 1, unit, subtotal: unit };
+    }),
+  ];
 
   const texts = elements.filter((el) => el.kind === "text" && el.text).map((el) => el.text);
   const hasImage = elements.some((el) => el.kind === "image");
-  const summary = `${t("summary_size")} ${size} · ${color.name}${texts.length ? ` · ${t("summary_text")}: "${texts.join(", ")}"` : ""}${hasImage ? ` · ${t("logo_label")}` : ""}`;
+  const chosenSizesLabel = Object.entries(quantities)
+    .filter(([, n]) => n > 0)
+    .map(([sz, n]) => `${sz} ×${n}`)
+    .join(", ");
+  const summary = isEdit
+    ? `${t("summary_size")} ${size} · ${color.name}${texts.length ? ` · ${t("summary_text")}: "${texts.join(", ")}"` : ""}${hasImage ? ` · ${t("logo_label")}` : ""}`
+    : `${color.name}${chosenSizesLabel ? ` · ${chosenSizesLabel}` : ""}`;
 
   const onAdd = () => {
-    const payload = {
-      code: p.code, name: p.name, image: color.image, size,
-      colorName: color.name, colorHex: color.hex, qty,
-      tiers: variant?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
-      elements,
-    };
     if (isEdit && editing) {
+      const payload = {
+        code: p.code, name: p.name, image: color.image, size,
+        colorName: color.name, colorHex: color.hex, qty,
+        tiers: variant?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
+        elements,
+      };
       update(editing.id, payload);
       toast.success("Updated", { description: summary });
       nav({ to: "/product/$code", params: { code: p.code }, search: {}, replace: true });
       setTimeout(() => setOpen(true), 300);
-    } else {
-      add(payload);
-      toast.success(t("added"), { description: summary });
-      setTimeout(() => setOpen(true), 400);
+      return;
     }
+
+    const bulkEntries = Object.entries(quantities).filter(([, n]) => n > 0);
+    if (bulkEntries.length === 0 && roster.length === 0) return;
+    for (const [sz, n] of bulkEntries) {
+      const v = getVariant(p, sz, color.name);
+      add({
+        code: p.code, name: p.name, image: color.image, size: sz,
+        colorName: color.name, colorHex: color.hex, qty: n,
+        tiers: v?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
+        elements,
+      });
+    }
+    // Una línea por amigo: mismo diseño, pero con el texto sustituido por su nombre (y número).
+    for (const r of roster) {
+      const v = getVariant(p, r.size, color.name);
+      const personalized = elements.map((el) =>
+        el.kind === "text" ? { ...el, text: `${r.name}${r.number ? " " + r.number : ""}`.toUpperCase() } : el
+      );
+      add({
+        code: p.code, name: p.name, image: color.image, size: r.size,
+        colorName: color.name, colorHex: color.hex, qty: 1,
+        tiers: v?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
+        elements: personalized,
+      });
+    }
+    toast.success(t("added"), { description: summary });
+    setQuantities({});
+    setRoster([]);
+    setTimeout(() => setOpen(true), 400);
   };
 
   return (
@@ -157,9 +250,14 @@ function ProductPage() {
 
         <ControlPanel
           product={p}
+          isEdit={isEdit}
           size={size} setSize={setSize}
           color={color} setColor={setColor}
           qty={qty} setQty={setQty}
+          quantities={quantities} setQuantity={setQuantity}
+          roster={roster} addRosterEntry={addRosterEntry} removeRosterEntry={removeRosterEntry}
+          breakdown={breakdown}
+          priceGroups={priceGroups}
           elements={elements}
           selectedId={selectedId} setSelectedId={setSelectedId}
           addImage={addImage} addText={addText}
@@ -175,13 +273,22 @@ function ProductPage() {
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{p.name}</p>
             <p className="truncate text-sm font-medium">{summary}</p>
           </div>
-          <div className="hidden sm:block">
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground text-right">{t("cart_total")}</p>
+          <div className="hidden sm:block text-right">
+            {isEdit ? (
+              <p className="text-sm font-medium text-muted-foreground">
+                {qty} × €{unitPrice.toFixed(2)}
+              </p>
+            ) : (
+              <p className="text-sm font-medium text-muted-foreground">
+                {totalQtyAllSizes} {totalQtyAllSizes === 1 ? "unidad" : "unidades"}
+              </p>
+            )}
             <p className="text-lg font-semibold">€{totalPrice.toFixed(2)}</p>
           </div>
           <button
             onClick={onAdd}
-            className="holo-gradient shrink-0 rounded-full px-5 py-3 font-display text-xs uppercase tracking-widest text-white shadow-[var(--gradient-holo-glow)] transition active:scale-95 sm:px-8 sm:text-sm"
+            disabled={!isEdit && totalQtyAllSizes === 0}
+            className="holo-gradient shrink-0 rounded-full px-5 py-3 font-display text-xs uppercase tracking-widest text-white shadow-[var(--gradient-holo-glow)] transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:px-8 sm:text-sm"
           >
             {isEdit ? "Update" : t("add_to_cart")} · €{totalPrice.toFixed(2)}
           </button>

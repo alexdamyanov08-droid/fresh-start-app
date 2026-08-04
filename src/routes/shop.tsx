@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { z } from "zod";
 import { Search } from "lucide-react";
 import { products } from "@/data/products";
+import { CATEGORY_GROUPS, categoryKeyForProduct } from "@/data/categories";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/shop")({
+  validateSearch: z.object({ category: z.string().optional() }),
   head: () => ({
     meta: [
       { title: "Shop the Drop — Merchango" },
@@ -20,16 +23,20 @@ export const Route = createFileRoute("/shop")({
 const PAGE = 24;
 
 function Shop() {
+  const { category } = Route.useSearch();
   const { t, tr } = useI18n();
   const [q, setQ] = useState("");
-  const [family, setFamily] = useState<string>("__all");
+  const [categoryKey, setCategoryKey] = useState<string>(category ?? "__all");
   const [gender, setGender] = useState<string>("__all");
   const [page, setPage] = useState(1);
 
-  const families = useMemo(
-    () => Array.from(new Set(products.map((p) => p.family).filter(Boolean))).sort(),
-    [],
-  );
+  // Keep in sync if the person arrives from a nav-menu link after the page
+  // was already loaded (client-side navigation).
+  useEffect(() => {
+    setCategoryKey(category ?? "__all");
+    setPage(1);
+  }, [category]);
+
   const genders = useMemo(
     () => Array.from(new Set(products.map((p) => p.gender).filter(Boolean))).sort(),
     [],
@@ -38,12 +45,12 @@ function Shop() {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     return products.filter((p) => {
-      if (family !== "__all" && p.family !== family) return false;
+      if (categoryKey !== "__all" && categoryKeyForProduct(p) !== categoryKey) return false;
       if (gender !== "__all" && p.gender !== gender) return false;
       if (term && !(p.name.toLowerCase().includes(term) || p.code.toLowerCase().includes(term))) return false;
       return true;
     });
-  }, [q, family, gender]);
+  }, [q, categoryKey, gender]);
 
   const paged = filtered.slice(0, page * PAGE);
   const canLoadMore = paged.length < filtered.length;
@@ -67,13 +74,13 @@ function Shop() {
           />
         </div>
         <select
-          value={family}
-          onChange={(e) => { setFamily(e.target.value); setPage(1); }}
+          value={categoryKey}
+          onChange={(e) => { setCategoryKey(e.target.value); setPage(1); }}
           className="rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none"
           aria-label={t("filter_category")}
         >
           <option value="__all">{t("filter_all")} · {t("filter_category")}</option>
-          {families.map((f) => <option key={f} value={f}>{tr(f)}</option>)}
+          {CATEGORY_GROUPS.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
         </select>
         <select
           value={gender}

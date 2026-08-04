@@ -3,6 +3,7 @@ import { ShoppingBag, User as UserIcon, ChevronDown, Sparkles, Truck, Clock, Lan
 import { useState, useRef, useEffect } from "react";
 import { useCart } from "@/lib/cart-store";
 import { useAuth } from "@/lib/auth-context";
+import { CATEGORY_GROUPS } from "@/data/categories";
 
 
 declare global {
@@ -49,12 +50,7 @@ function useGoogleTranslate() {
 }
 
 
-const CATEGORIES = [
-  { label: "Camisetas", family: "Camisetas" },
-  { label: "Sudaderas", family: "Sudaderas" },
-  { label: "Polos", family: "Polos" },
-  { label: "Softshells", family: "Softshells" },
-];
+
 
 export function TopNav() {
   const { count, setOpen } = useCart();
@@ -128,10 +124,11 @@ export function TopNav() {
               </button>
               {prodOpen && (
                 <div className="absolute left-1/2 top-full mt-3 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-background shadow-lg">
-                  {CATEGORIES.map((c) => (
+                  {CATEGORY_GROUPS.map((c) => (
                     <Link
-                      key={c.family}
+                      key={c.key}
                       to="/shop"
+                      search={{ category: c.key }}
                       onClick={() => setProdOpen(false)}
                       className="block px-4 py-3 text-sm font-semibold uppercase tracking-wide text-brand transition hover:bg-sand hover:text-gold"
                     >

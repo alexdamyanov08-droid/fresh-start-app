@@ -34,7 +34,7 @@ export function ProductCard({ p, i }: { p: Product; i: number }) {
           </span>
         </div>
         <div className="flex flex-col gap-1 p-4">
-          <p className="truncate font-display text-lg uppercase leading-tight">{p.name}</p>
+          <p translate="no" className="notranslate truncate font-display text-lg uppercase leading-tight">{p.name}</p>
           <p className="line-clamp-1 text-xs text-muted-foreground">{tr(p.category)}</p>
           <div className="mt-2 flex items-center justify-between">
             <span className="font-semibold">€{p.price.toFixed(2)}</span>
