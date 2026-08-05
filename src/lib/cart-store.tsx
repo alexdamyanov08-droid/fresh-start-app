@@ -9,6 +9,8 @@ export type DesignElement = {
   image?: string | null;
   text?: string | null;
   font?: string | null;
+  bold?: boolean | null;
+  italic?: boolean | null;
   color?: string | null;
   size: number; // en px, decide el precio de personalización de ESTE elemento
   pos: { x: number; y: number };

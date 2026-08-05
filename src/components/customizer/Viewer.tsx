@@ -79,7 +79,22 @@ export function Viewer(props: {
 
   const fontClass = (font: string | null) =>
     font === "brutal" ? "font-display" :
-    font === "mono" ? "font-mono font-bold" : "font-sans font-black italic";
+    font === "sans" ? "font-sans" :
+    font === "mono" ? "font-mono" :
+    font === "serif" ? "font-serif" :
+    font === "script" ? "font-script" :
+    font === "condensed" ? "font-condensed" :
+    font === "varsity" ? "font-varsity" :
+    font === "graffiti" ? "font-graffiti" :
+    font === "stencil" ? "font-stencil" :
+    font === "calligraphy" ? "font-calligraphy" :
+    font === "serif_thin" ? "font-serif-thin" :
+    font === "casual" ? "font-casual" :
+    font === "fun" ? "font-fun" :
+    font === "futuristic" ? "font-futuristic" :
+    font === "retro" ? "font-retro" :
+    font === "italic" ? "font-sans" : // compatibilidad con diseños antiguos
+    "font-display";
 
   return (
     <div className="relative flex h-full w-full flex-col gap-4">
@@ -141,7 +156,7 @@ export function Viewer(props: {
                   )}
                   {el.kind === "text" && (
                     <span
-                      className={`${fontClass(el.font)} pointer-events-none select-none uppercase tracking-tight`}
+                      className={`${fontClass(el.font)} ${el.bold ? "font-black" : ""} ${el.italic ? "italic" : ""} pointer-events-none select-none uppercase tracking-tight`}
                       style={{
                         fontSize: `${textPx}px`,
                         lineHeight: 1,

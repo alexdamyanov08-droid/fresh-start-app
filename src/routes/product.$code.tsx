@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { getProduct, getVariant, products } from "@/data/products";
 import { Viewer, type View } from "@/components/customizer/Viewer";
 import { ControlPanel } from "@/components/customizer/ControlPanel";
+import { SizeChart } from "@/components/customizer/SizeChart";
 import { useCart, type DesignElement } from "@/lib/cart-store";
 import { basePriceForVariant, surchargeOf } from "@/lib/pricing";
 import { useI18n } from "@/lib/i18n";
@@ -264,6 +265,11 @@ function ProductPage() {
           updateElement={updateElement} removeElement={removeElement}
           totalPrice={totalPrice}
         />
+      </div>
+
+      {/* Tabla de tallas: debajo de la foto en ordenador, al final de todo en móvil */}
+      <div className="mt-6 md:mt-4 md:max-w-[56%]">
+        <SizeChart sizeChart={p.sizeChart} selectedSize={size} />
       </div>
 
       {/* Sticky action bar */}

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Caveat:wght@700&family=Bebas+Neue&family=Passion+One:wght@700&family=Permanent+Marker&family=Stardos+Stencil:wght@700&family=Alex+Brush&family=Cormorant+Garamond:wght@600&family=Shadows+Into+Light&family=Fredoka:wght@500&family=Orbitron:wght@700&family=Righteous&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -39,6 +40,19 @@
   --color-sand: var(--sand);
   --font-display: "Archivo Black", "Anton", ui-sans-serif, sans-serif;
   --font-sans: "Inter", ui-sans-serif, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-script: "Caveat", cursive;
+  --font-condensed: "Bebas Neue", ui-sans-serif, sans-serif;
+  --font-varsity: "Passion One", ui-sans-serif, sans-serif;
+  --font-graffiti: "Permanent Marker", cursive;
+  --font-stencil: "Stardos Stencil", ui-sans-serif, sans-serif;
+  --font-calligraphy: "Alex Brush", cursive;
+  --font-serif-thin: "Cormorant Garamond", ui-serif, serif;
+  --font-casual: "Shadows Into Light", cursive;
+  --font-fun: "Fredoka", ui-sans-serif, sans-serif;
+  --font-futuristic: "Orbitron", ui-sans-serif, sans-serif;
+  --font-retro: "Righteous", ui-sans-serif, sans-serif;
 }
 
 :root {

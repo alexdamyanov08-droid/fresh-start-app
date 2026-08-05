@@ -55,9 +55,21 @@ export function ControlPanel(props: {
 
   const textColors = ["#0a0a0a", "#ffffff", "#8b00ff", "#00a3ff", "#ec4899", "#facc15"];
   const fonts = [
-    { key: "brutal", label: "BRUTAL", cls: "font-display" },
-    { key: "italic", label: "Italic", cls: "font-sans font-black italic" },
-    { key: "mono", label: "MONO", cls: "font-mono font-bold" },
+    { key: "brutal", label: "Brutal", cls: "font-display" },
+    { key: "sans", label: "Moderna", cls: "font-sans" },
+    { key: "mono", label: "Mono", cls: "font-mono" },
+    { key: "serif", label: "Elegante", cls: "font-serif" },
+    { key: "script", label: "Manuscrita", cls: "font-script" },
+    { key: "condensed", label: "Deportiva", cls: "font-condensed" },
+    { key: "varsity", label: "Universitaria", cls: "font-varsity" },
+    { key: "graffiti", label: "Graffiti", cls: "font-graffiti" },
+    { key: "stencil", label: "Plantilla", cls: "font-stencil" },
+    { key: "calligraphy", label: "Caligrafía", cls: "font-calligraphy" },
+    { key: "serif_thin", label: "Serif Fina", cls: "font-serif-thin" },
+    { key: "casual", label: "Casual", cls: "font-casual" },
+    { key: "fun", label: "Divertida", cls: "font-fun" },
+    { key: "futuristic", label: "Futurista", cls: "font-futuristic" },
+    { key: "retro", label: "Retro", cls: "font-retro" },
   ];
 
   const images = props.elements.filter((el) => el.kind === "image");
@@ -351,7 +363,7 @@ export function ControlPanel(props: {
 
               <div>
                 <p className="mb-2 text-xs uppercase tracking-widest">{t("text_font")}</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto pr-1">
                   {fonts.map((f) => (
                     <button
                       key={f.key}
@@ -364,6 +376,26 @@ export function ControlPanel(props: {
                       {f.label}
                     </button>
                   ))}
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); props.updateElement(el.id, { bold: !el.bold }); }}
+                    aria-pressed={!!el.bold}
+                    className={`flex-1 rounded-lg border py-2 text-sm font-black transition ${
+                      el.bold ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"
+                    }`}
+                  >
+                    B
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); props.updateElement(el.id, { italic: !el.italic }); }}
+                    aria-pressed={!!el.italic}
+                    className={`flex-1 rounded-lg border py-2 text-sm italic transition ${
+                      el.italic ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"
+                    }`}
+                  >
+                    I
+                  </button>
                 </div>
               </div>
 
