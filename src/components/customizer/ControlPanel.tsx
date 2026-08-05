@@ -415,6 +415,22 @@ export function ControlPanel(props: {
                       <span className="h-6 w-6 rounded-full border border-border/50" style={{ backgroundColor: c }} />
                     </button>
                   ))}
+                  <label
+                    className="relative grid h-9 w-9 place-items-center rounded-full border-2 border-border cursor-pointer transition hover:border-foreground"
+                    title="Elegir cualquier color"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="color"
+                      value={el.color ?? "#0a0a0a"}
+                      onChange={(e) => props.updateElement(el.id, { color: e.target.value })}
+                      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    />
+                    <span
+                      className="h-6 w-6 rounded-full border border-border/50"
+                      style={{ background: "conic-gradient(red, yellow, lime, cyan, blue, magenta, red)" }}
+                    />
+                  </label>
                 </div>
               </div>
 
