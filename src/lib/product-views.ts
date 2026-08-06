@@ -6,8 +6,7 @@
 
 import type { View } from "@/components/customizer/Viewer";
 
-const SUPABASE_URL = "https://kskrofewwnurmqiqzjtz.supabase.co";
-const BUCKET = "vistas-productos";
+const R2_PUBLIC_URL = "https://pub-597cce2a5bf94f1193f57972dd27c3fc.r2.dev";
 
 // Código de perspectiva que usa el proveedor para cada vista
 const PERSPECTIVE_BY_VIEW: Record<View, string> = {
@@ -54,5 +53,5 @@ export function getViewImage(
   const perspective = PERSPECTIVE_BY_VIEW[view];
   const filename = `p_${ref}_${colorCode}_${perspective}_1.jpg`;
 
-  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${filename}`;
+  return `${R2_PUBLIC_URL}/${filename}`;
 }
