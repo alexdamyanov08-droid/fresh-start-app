@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import type { Product } from "@/data/products";
 import { useI18n } from "@/lib/i18n";
+import { MODEL_IMAGES } from "@/data/model-images";
 
 export function ProductCard({ p, i }: { p: Product; i: number }) {
   const { tr } = useI18n();
@@ -23,7 +24,7 @@ export function ProductCard({ p, i }: { p: Product; i: number }) {
         >
           {primary?.image && (
             <img
-              src={primary.image}
+              src={MODEL_IMAGES[p.code] ?? primary.image}
               alt={p.name}
               loading="lazy"
               className="h-full w-full object-contain p-4 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
