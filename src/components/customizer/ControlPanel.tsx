@@ -55,21 +55,51 @@ export function ControlPanel(props: {
 
   const textColors = ["#0a0a0a", "#ffffff", "#8b00ff", "#00a3ff", "#ec4899", "#facc15"];
   const fonts = [
-    { key: "brutal", label: "Brutal", cls: "font-display" },
-    { key: "sans", label: "Moderna", cls: "font-sans" },
-    { key: "mono", label: "Mono", cls: "font-mono" },
-    { key: "serif", label: "Elegante", cls: "font-serif" },
-    { key: "script", label: "Manuscrita", cls: "font-script" },
-    { key: "condensed", label: "Deportiva", cls: "font-condensed" },
-    { key: "varsity", label: "Universitaria", cls: "font-varsity" },
-    { key: "graffiti", label: "Graffiti", cls: "font-graffiti" },
-    { key: "stencil", label: "Plantilla", cls: "font-stencil" },
-    { key: "calligraphy", label: "Caligrafía", cls: "font-calligraphy" },
-    { key: "serif_thin", label: "Serif Fina", cls: "font-serif-thin" },
-    { key: "casual", label: "Casual", cls: "font-casual" },
-    { key: "fun", label: "Divertida", cls: "font-fun" },
-    { key: "futuristic", label: "Futurista", cls: "font-futuristic" },
-    { key: "retro", label: "Retro", cls: "font-retro" },
+    { key: "brutal", label: "Brutal", cls: "font-display", family: "var(--font-display)" },
+    { key: "sans", label: "Moderna", cls: "font-sans", family: "var(--font-sans)" },
+    { key: "mono", label: "Mono", cls: "font-mono", family: "var(--font-mono)" },
+    { key: "serif", label: "Elegante", cls: "font-serif", family: "var(--font-serif)" },
+    { key: "script", label: "Manuscrita", cls: "font-script", family: "var(--font-script)" },
+    { key: "condensed", label: "Deportiva", cls: "font-condensed", family: "var(--font-condensed)" },
+    { key: "varsity", label: "Universitaria", cls: "font-varsity", family: "var(--font-varsity)" },
+    { key: "graffiti", label: "Graffiti", cls: "font-graffiti", family: "var(--font-graffiti)" },
+    { key: "stencil", label: "Plantilla", cls: "font-stencil", family: "var(--font-stencil)" },
+    { key: "calligraphy", label: "Caligrafía", cls: "font-calligraphy", family: "var(--font-calligraphy)" },
+    { key: "serif_thin", label: "Serif Fina", cls: "font-serif-thin", family: "var(--font-serif-thin)" },
+    { key: "casual", label: "Casual", cls: "font-casual", family: "var(--font-casual)" },
+    { key: "fun", label: "Divertida", cls: "font-fun", family: "var(--font-fun)" },
+    { key: "futuristic", label: "Futurista", cls: "font-futuristic", family: "var(--font-futuristic)" },
+    { key: "retro", label: "Retro", cls: "font-retro", family: "var(--font-retro)" },
+    { key: "gothic", label: "Gótica", cls: "font-gothic", family: "var(--font-gothic)" },
+    { key: "horror", label: "Terror", cls: "font-horror", family: "var(--font-horror)" },
+    { key: "comic", label: "Cómic", cls: "font-comic", family: "var(--font-comic)" },
+    { key: "cartoon", label: "Cartoon", cls: "font-cartoon", family: "var(--font-cartoon)" },
+    { key: "western", label: "Western", cls: "font-western", family: "var(--font-western)" },
+    { key: "neon", label: "Neón", cls: "font-neon", family: "var(--font-neon)" },
+    { key: "wedding", label: "Boda", cls: "font-wedding", family: "var(--font-wedding)" },
+    { key: "military", label: "Militar", cls: "font-military", family: "var(--font-military)" },
+    { key: "kids", label: "Infantil", cls: "font-kids", family: "var(--font-kids)" },
+    { key: "vintage", label: "Vintage", cls: "font-vintage", family: "var(--font-vintage)" },
+    { key: "sketch", label: "Boceto", cls: "font-sketch", family: "var(--font-sketch)" },
+    { key: "typewriter", label: "Máquina Escribir", cls: "font-typewriter", family: "var(--font-typewriter)" },
+    { key: "luxury", label: "Lujo", cls: "font-luxury", family: "var(--font-luxury)" },
+    { key: "street", label: "Callejera", cls: "font-street", family: "var(--font-street)" },
+    { key: "blood", label: "Sangre", cls: "font-blood", family: "var(--font-blood)" },
+    { key: "pixel", label: "Pixel", cls: "font-pixel", family: "var(--font-pixel)" },
+    { key: "chalk", label: "Tiza", cls: "font-chalk", family: "var(--font-chalk)" },
+    { key: "brush", label: "Pincel", cls: "font-brush", family: "var(--font-brush)" },
+    { key: "rugby", label: "Rugby", cls: "font-rugby", family: "var(--font-rugby)" },
+    { key: "refined", label: "Refinada", cls: "font-refined", family: "var(--font-refined)" },
+    { key: "note", label: "Nota", cls: "font-note", family: "var(--font-note)" },
+    { key: "circus", label: "Circo", cls: "font-circus", family: "var(--font-circus)" },
+    { key: "spooky", label: "Espeluznante", cls: "font-spooky", family: "var(--font-spooky)" },
+    { key: "metal", label: "Metal", cls: "font-metal", family: "var(--font-metal)" },
+    { key: "artdeco", label: "Art Decó", cls: "font-artdeco", family: "var(--font-artdeco)" },
+    { key: "techno", label: "Tecno", cls: "font-techno", family: "var(--font-techno)" },
+    { key: "candy", label: "Caramelo", cls: "font-candy", family: "var(--font-candy)" },
+    { key: "formal", label: "Clásica", cls: "font-formal", family: "var(--font-formal)" },
+    { key: "surf", label: "Tropical", cls: "font-surf", family: "var(--font-surf)" },
+    { key: "royal", label: "Real", cls: "font-royal", family: "var(--font-royal)" },
   ];
 
   const images = props.elements.filter((el) => el.kind === "image");
@@ -363,20 +393,17 @@ export function ControlPanel(props: {
 
               <div>
                 <p className="mb-2 text-xs uppercase tracking-widest">{t("text_font")}</p>
-                <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto pr-1">
+                <select
+                  value={el.font ?? "brutal"}
+                  onChange={(e) => props.updateElement(el.id, { font: e.target.value })}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-base"
+                >
                   {fonts.map((f) => (
-                    <button
-                      key={f.key}
-                      onClick={(e) => { e.stopPropagation(); props.updateElement(el.id, { font: f.key }); }}
-                      aria-pressed={el.font === f.key}
-                      className={`rounded-lg border py-3 text-sm uppercase transition ${f.cls} ${
-                        el.font === f.key ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"
-                      }`}
-                    >
+                    <option key={f.key} value={f.key} style={{ fontFamily: f.family }}>
                       {f.label}
-                    </button>
+                    </option>
                   ))}
-                </div>
+                </select>
                 <div className="mt-2 flex gap-2">
                   <button
                     onClick={(e) => { e.stopPropagation(); props.updateElement(el.id, { bold: !el.bold }); }}

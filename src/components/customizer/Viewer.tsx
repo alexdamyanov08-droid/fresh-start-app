@@ -93,6 +93,36 @@ export function Viewer(props: {
     font === "fun" ? "font-fun" :
     font === "futuristic" ? "font-futuristic" :
     font === "retro" ? "font-retro" :
+    font === "gothic" ? "font-gothic" :
+    font === "horror" ? "font-horror" :
+    font === "comic" ? "font-comic" :
+    font === "cartoon" ? "font-cartoon" :
+    font === "western" ? "font-western" :
+    font === "neon" ? "font-neon" :
+    font === "wedding" ? "font-wedding" :
+    font === "military" ? "font-military" :
+    font === "kids" ? "font-kids" :
+    font === "vintage" ? "font-vintage" :
+    font === "sketch" ? "font-sketch" :
+    font === "typewriter" ? "font-typewriter" :
+    font === "luxury" ? "font-luxury" :
+    font === "street" ? "font-street" :
+    font === "blood" ? "font-blood" :
+    font === "pixel" ? "font-pixel" :
+    font === "chalk" ? "font-chalk" :
+    font === "brush" ? "font-brush" :
+    font === "rugby" ? "font-rugby" :
+    font === "refined" ? "font-refined" :
+    font === "note" ? "font-note" :
+    font === "circus" ? "font-circus" :
+    font === "spooky" ? "font-spooky" :
+    font === "metal" ? "font-metal" :
+    font === "artdeco" ? "font-artdeco" :
+    font === "techno" ? "font-techno" :
+    font === "candy" ? "font-candy" :
+    font === "formal" ? "font-formal" :
+    font === "surf" ? "font-surf" :
+    font === "royal" ? "font-royal" :
     font === "italic" ? "font-sans" : // compatibilidad con diseños antiguos
     "font-display";
 

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Caveat:wght@700&family=Bebas+Neue&family=Passion+One:wght@700&family=Permanent+Marker&family=Stardos+Stencil:wght@700&family=Alex+Brush&family=Cormorant+Garamond:wght@600&family=Shadows+Into+Light&family=Fredoka:wght@500&family=Orbitron:wght@700&family=Righteous&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Creepster&family=Bangers&family=Luckiest+Guy&family=Rye&family=Monoton&family=Great+Vibes&family=Black+Ops+One&family=Baloo+2:wght@600&family=Abril+Fatface&family=Architects+Daughter&family=Special+Elite&family=Cinzel:wght@600&family=Bungee&family=Nosifer&family=Press+Start+2P&family=Gochi+Hand&family=Yellowtail&family=Teko:wght@600&family=Marcellus&family=Indie+Flower&family=Chewy&family=Butcherman&family=Metal+Mania&family=Poiret+One&family=Audiowide&family=Sniglet:wght@800&family=EB+Garamond:wght@500&family=Pacifico&family=Cinzel+Decorative:wght@700&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -53,6 +54,36 @@
   --font-fun: "Fredoka", ui-sans-serif, sans-serif;
   --font-futuristic: "Orbitron", ui-sans-serif, sans-serif;
   --font-retro: "Righteous", ui-sans-serif, sans-serif;
+  --font-gothic: "UnifrakturMaguntia", cursive;
+  --font-horror: "Creepster", cursive;
+  --font-comic: "Bangers", cursive;
+  --font-cartoon: "Luckiest Guy", cursive;
+  --font-western: "Rye", cursive;
+  --font-neon: "Monoton", cursive;
+  --font-wedding: "Great Vibes", cursive;
+  --font-military: "Black Ops One", sans-serif;
+  --font-kids: "Baloo 2", ui-sans-serif, sans-serif;
+  --font-vintage: "Abril Fatface", serif;
+  --font-sketch: "Architects Daughter", cursive;
+  --font-typewriter: "Special Elite", monospace;
+  --font-luxury: "Cinzel", serif;
+  --font-street: "Bungee", cursive;
+  --font-blood: "Nosifer", cursive;
+  --font-pixel: "Press Start 2P", cursive;
+  --font-chalk: "Gochi Hand", cursive;
+  --font-brush: "Yellowtail", cursive;
+  --font-rugby: "Teko", ui-sans-serif, sans-serif;
+  --font-refined: "Marcellus", serif;
+  --font-note: "Indie Flower", cursive;
+  --font-circus: "Chewy", cursive;
+  --font-spooky: "Butcherman", cursive;
+  --font-metal: "Metal Mania", cursive;
+  --font-artdeco: "Poiret One", sans-serif;
+  --font-techno: "Audiowide", sans-serif;
+  --font-candy: "Sniglet", cursive;
+  --font-formal: "EB Garamond", ui-serif, serif;
+  --font-surf: "Pacifico", cursive;
+  --font-royal: "Cinzel Decorative", cursive;
 }
 
 :root {
