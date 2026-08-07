@@ -58,7 +58,45 @@ export function Viewer(props: {
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
     dragRef.current = { id: el.id, startX: e.clientX, startY: e.clientY, startPos: el.pos };
   };
+  const resizeRef = useRef<{ id: string; startX: number; startY: number; startSize: number } | null>(null);
+  const pinchRef = useRef<{ id: string; startDist: number; startSize: number } | null>(null);
+  const onResizeHandlePointerDown = (e: React.PointerEvent, el: DesignElement) => {
+    e.preventDefault();
+    e.stopPropagation();
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    resizeRef.current = { id: el.id, startX: e.clientX, startY: e.clientY, startSize: el.size };
+  };
+  const onElementTouchStart = (e: React.TouchEvent, el: DesignElement) => {
+    if (e.touches.length === 2) {
+      e.stopPropagation();
+      dragRef.current = null;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      pinchRef.current = { id: el.id, startDist: dist, startSize: el.size };
+    }
+  };
+  const onElementTouchMove = (e: React.TouchEvent) => {
+    if (!pinchRef.current || e.touches.length !== 2) return;
+    e.preventDefault();
+    const el = props.elements.find((x) => x.id === pinchRef.current!.id);
+    if (!el) return;
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
+    const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+    const ratio = dist / pinchRef.current.startDist;
+    props.updateElement(el.id, { size: Math.min(60, Math.max(10, pinchRef.current.startSize * ratio)) });
+  };
+  const onElementTouchEnd = () => { pinchRef.current = null; };
   const onPointerMove = (e: React.PointerEvent) => {
+    if (resizeRef.current) {
+      const el = props.elements.find((x) => x.id === resizeRef.current!.id);
+      if (el) {
+        const delta = (e.clientX - resizeRef.current.startX) + (e.clientY - resizeRef.current.startY);
+        props.updateElement(el.id, { size: Math.min(60, Math.max(10, resizeRef.current.startSize + delta * 0.2)) });
+      }
+      return;
+    }
     if (!dragRef.current || !canvasRef.current) return;
     const el = props.elements.find((x) => x.id === dragRef.current!.id);
     if (!el) return;
@@ -72,7 +110,7 @@ export function Viewer(props: {
       },
     });
   };
-  const onPointerUp = () => { dragRef.current = null; };
+  const onPointerUp = () => { dragRef.current = null; resizeRef.current = null; };
   const onBackgroundPointerDown = (e: React.PointerEvent) => {
     if (e.target === canvasRef.current) props.setSelectedId(null);
   };
@@ -165,6 +203,9 @@ export function Viewer(props: {
                 <div
                   key={el.id}
                   onPointerDown={(e) => onElementPointerDown(e, el)}
+                  onTouchStart={(e) => onElementTouchStart(e, el)}
+                  onTouchMove={onElementTouchMove}
+                  onTouchEnd={onElementTouchEnd}
                   className={`absolute flex cursor-move items-center justify-center rounded-md ${
                     isSelected ? "outline outline-2 outline-dashed outline-foreground/60" : ""
                   }`}
@@ -174,6 +215,7 @@ export function Viewer(props: {
                     width: el.kind === "image" ? `${el.size}%` : undefined,
                     padding: isSelected ? "6px" : undefined,
                     transform: "translate(-50%, -50%)",
+                    touchAction: "none",
                   }}
                 >
                   {el.kind === "image" && el.image && (
@@ -205,6 +247,15 @@ export function Viewer(props: {
                       aria-label={t("remove_element")}
                     >
                       <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                  {isSelected && (
+                    <button
+                      onPointerDown={(e) => onResizeHandlePointerDown(e, el)}
+                      className="absolute -bottom-3 -right-3 grid h-6 w-6 cursor-nwse-resize place-items-center rounded-full border border-border bg-background text-xs shadow-sm"
+                      aria-label="Redimensionar"
+                    >
+                      ⤤
                     </button>
                   )}
                 </div>
