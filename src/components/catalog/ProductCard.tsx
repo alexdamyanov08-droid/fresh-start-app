@@ -1,12 +1,29 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import type { Product } from "@/data/products";
+import { getVariant } from "@/data/products";
 import { useI18n } from "@/lib/i18n";
 import { MODEL_IMAGES } from "@/data/model-images";
+import { isKidSize } from "@/lib/sizes";
 
 export function ProductCard({ p, i }: { p: Product; i: number }) {
   const { tr } = useI18n();
   const primary = p.colors.find((c) => c.image) ?? p.colors[0];
+  const colorNameForPrice = primary?.name ?? "";
+  const fromPriceKid = (() => {
+    const prices = p.sizes
+      .filter((s) => isKidSize(s))
+      .map((s) => getVariant(p, s, colorNameForPrice)?.tiers?.t1_10)
+      .filter((n): n is number => typeof n === "number");
+    return prices.length ? Math.min(...prices) : null;
+  })();
+  const fromPriceAdult = (() => {
+    const prices = p.sizes
+      .filter((s) => !isKidSize(s))
+      .map((s) => getVariant(p, s, colorNameForPrice)?.tiers?.t1_10)
+      .filter((n): n is number => typeof n === "number");
+    return prices.length ? Math.min(...prices) : null;
+  })();
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -38,7 +55,23 @@ export function ProductCard({ p, i }: { p: Product; i: number }) {
           <p translate="no" className="notranslate truncate font-display text-lg uppercase leading-tight">{p.name}</p>
           <p className="line-clamp-1 text-xs text-muted-foreground">{tr(p.category)}</p>
           <div className="mt-2 flex items-center justify-between">
-            <span className="font-semibold">€{p.price.toFixed(2)}</span>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
+              {fromPriceKid != null && (
+                <span className="font-semibold">
+                  Desde €{fromPriceKid.toFixed(2)}{" "}
+                  <span className="text-xs font-normal text-muted-foreground">Niño</span>
+                </span>
+              )}
+              {fromPriceAdult != null && (
+                <span className="font-semibold">
+                  Desde €{fromPriceAdult.toFixed(2)}{" "}
+                  <span className="text-xs font-normal text-muted-foreground">Adulto</span>
+                </span>
+              )}
+              {fromPriceKid == null && fromPriceAdult == null && (
+                <span className="font-semibold">€{p.price.toFixed(2)}</span>
+              )}
+            </div>
             <div className="flex -space-x-1">
               {p.colors.slice(0, 4).map((c) => (
                 <span
