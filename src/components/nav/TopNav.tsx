@@ -110,7 +110,7 @@ export function TopNav() {
       <div className="border-b border-border bg-background">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link to="/" className="shrink-0">
-            <img src="/logo-horizontal.png" alt="XPRINTWEAR" className="h-16 w-auto sm:h-20" />
+            <img src="/logo-horizontal.png" alt="XPRINTWEAR" className="h-11 w-auto sm:h-14" />
           </Link>
 
           <ul className="hidden items-center gap-10 md:flex">

@@ -40,6 +40,18 @@ function sizeSortKey(raw: string): [number, number, string] {
   return [5, 0, s];
 }
 
+/** Indica si una talla es de nino/bebe (meses, anos, rangos infantiles tipo
+ *  "5/6", o numeros bajos de edad), a diferencia de las de adulto (S-5XL, 36-52...). */
+export function isKidSize(raw: string): boolean {
+  const s = raw.trim().toUpperCase();
+  if (/^\d+\s*MESES?$/.test(s)) return true;
+  if (/^\d+\s*A[ÑN]OS?$/.test(s)) return true;
+  if (/^(\d+)\/(\d+)$/.test(s)) return true;
+  const m = s.match(/^(\d+)$/);
+  if (m) return parseInt(m[1], 10) < 18;
+  if (s.startsWith("KID") || s.startsWith("JR")) return true;
+  return false;
+}
 export function sortSizes(sizes: string[]): string[] {
   return [...sizes].sort((a, b) => {
     const ka = sizeSortKey(a);

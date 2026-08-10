@@ -26,6 +26,8 @@ export function ControlPanel(props: {
   updateElement: (id: string, patch: Partial<DesignElement>) => void;
   removeElement: (id: string) => void;
   totalPrice: number;
+  fromPriceKid?: number | null;
+  fromPriceAdult?: number | null;
 }) {
   const { t, tr } = useI18n();
   const p = props.product;
@@ -115,7 +117,26 @@ export function ControlPanel(props: {
         >
           {p.name}
         </h1>
-        <p className="mt-2 text-2xl font-semibold">€{props.totalPrice.toFixed(2)}</p>
+        {props.totalPrice > 0 ? (
+          <p className="mt-2 text-2xl font-semibold">€{props.totalPrice.toFixed(2)}</p>
+        ) : props.fromPriceKid != null || props.fromPriceAdult != null ? (
+          <div className="mt-2 flex flex-col gap-0.5">
+            {props.fromPriceKid != null && (
+              <p className="text-lg font-semibold">
+                Desde €{props.fromPriceKid.toFixed(2)}{" "}
+                <span className="text-sm font-normal text-muted-foreground">Niño</span>
+              </p>
+            )}
+            {props.fromPriceAdult != null && (
+              <p className="text-lg font-semibold">
+                Desde €{props.fromPriceAdult.toFixed(2)}{" "}
+                <span className="text-sm font-normal text-muted-foreground">Adulto</span>
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="mt-2 text-2xl font-semibold">€{props.totalPrice.toFixed(2)}</p>
+        )}
         {p.desc && <p className="mt-3 text-sm text-muted-foreground">{p.desc}</p>}
         {p.composition && <p className="mt-1 text-sm text-muted-foreground">{p.composition}</p>}
       </div>

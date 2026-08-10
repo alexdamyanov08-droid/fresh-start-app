@@ -9,6 +9,16 @@ import { ControlPanel } from "@/components/customizer/ControlPanel";
 import { SizeChart } from "@/components/customizer/SizeChart";
 import { useCart, type DesignElement } from "@/lib/cart-store";
 import { basePriceForVariant, surchargeOf } from "@/lib/pricing";
+import { isKidSize } from "@/lib/sizes";
+// Precio minimo (tramo 1-10 uds) para nino y para adulto, del color elegido.
+// Se usan para el "Desde X€" cuando todavia no se ha elegido ninguna unidad.
+function lowestTierPrice(sizesList: string[], forKid: boolean, prod: any, colorName: string): number | null {
+  const prices = sizesList
+    .filter((s) => isKidSize(s) === forKid)
+    .map((s) => getVariant(prod, s, colorName)?.tiers?.t1_10)
+    .filter((n): n is number => typeof n === "number");
+  return prices.length ? Math.min(...prices) : null;
+}
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/product/$code")({
@@ -123,6 +133,14 @@ function ProductPage() {
       tiers: g.tiers,
     }));
   }, [p, color.name]);
+  const fromPriceKid = useMemo(
+    () => lowestTierPrice(p.sizes, true, p, color.name),
+    [p, color.name],
+  );
+  const fromPriceAdult = useMemo(
+    () => lowestTierPrice(p.sizes, false, p, color.name),
+    [p, color.name],
+  );
 
   // Unidades de esta MISMA referencia ya en el carrito (sin contar la línea que
   // se está editando), más las que se van a añadir ahora: eso decide el tramo.
@@ -250,6 +268,8 @@ function ProductPage() {
         </div>
 
         <ControlPanel
+          fromPriceKid={fromPriceKid}
+          fromPriceAdult={fromPriceAdult}
           product={p}
           isEdit={isEdit}
           size={size} setSize={setSize}
