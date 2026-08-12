@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag, User as UserIcon, ChevronDown, Sparkles, Truck, Clock, Languages } from "lucide-react";
+import { ShoppingBag, User as UserIcon, ChevronDown, Sparkles, Truck, Clock, Languages, ShieldCheck } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useCart } from "@/lib/cart-store";
 import { useAuth } from "@/lib/auth-context";
+import { useIsAdmin } from "@/lib/admin";
 import { CATEGORY_GROUPS } from "@/data/categories";
 
 
@@ -55,6 +56,7 @@ function useGoogleTranslate() {
 export function TopNav() {
   const { count, setOpen } = useCart();
   const { user } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const [prodOpen, setProdOpen] = useState(false);
   const prodRef = useRef<HTMLLIElement>(null);
   const [lang, setLang] = useState<"es" | "en">("es");
@@ -167,6 +169,16 @@ export function TopNav() {
               {lang === "es" ? "EN" : "ES"}
             </button>
             <div id="google_translate_element" />
+            {isAdmin && (
+              <Link
+                to="/admin"
+                aria-label="Panel interno"
+                title="Panel interno"
+                className="rounded-full p-2 text-brand transition hover:bg-sand"
+              >
+                <ShieldCheck className="h-5 w-5" />
+              </Link>
+            )}
             <Link
               to={user ? "/account" : "/auth"}
               aria-label={user ? "Mi cuenta" : "Iniciar sesión"}
