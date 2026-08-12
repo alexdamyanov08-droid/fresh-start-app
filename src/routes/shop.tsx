@@ -11,9 +11,9 @@ export const Route = createFileRoute("/shop")({
   validateSearch: z.object({ category: z.string().optional() }),
   head: () => ({
     meta: [
-      { title: "Shop the Drop — Merchango" },
+      { title: "Shop the Drop — Xprint Wear" },
       { name: "description", content: "150 streetwear pieces. Fully customizable. Yours to design." },
-      { property: "og:title", content: "Shop the Drop — Merchango" },
+      { property: "og:title", content: "Shop the Drop — Xprint Wear" },
       { property: "og:description", content: "150 streetwear pieces. Fully customizable." },
     ],
   }),

@@ -39,7 +39,7 @@ const STRINGS = {
     account: "Account", email: "Email", password: "Password",
     auth_signin_title: "Welcome back", auth_signup_title: "Create account",
     auth_signin_sub: "Sign in to continue designing.",
-    auth_signup_sub: "Join Merchango to save your designs.",
+    auth_signup_sub: "Join Xprint Wear to save your designs.",
     have_account: "Already have an account?", no_account: "Don't have an account?",
     auth_submit_signin: "Sign in", auth_submit_signup: "Create account",
     auth_success_signin: "Signed in", auth_success_signup: "Account created",
@@ -96,9 +96,9 @@ const STRINGS = {
     // Auth
     sign_in: "Iniciar sesión", sign_up: "Registrarse", sign_out: "Cerrar sesión",
     account: "Cuenta", email: "Correo", password: "Contraseña",
-    auth_signin_title: "Bienvenido de vuelta", auth_signup_title: "Crea tu cuenta",
+    auth_signin_title: "Dale forma a tu idea", auth_signup_title: "Crea tu cuenta",
     auth_signin_sub: "Inicia sesión para seguir diseñando.",
-    auth_signup_sub: "Únete a Merchango para guardar tus diseños.",
+    auth_signup_sub: "Únete a Xprint Wear para guardar tus diseños.",
     have_account: "¿Ya tienes cuenta?", no_account: "¿No tienes cuenta?",
     auth_submit_signin: "Iniciar sesión", auth_submit_signup: "Crear cuenta",
     auth_success_signin: "Sesión iniciada", auth_success_signup: "Cuenta creada",
@@ -186,7 +186,7 @@ function translateTerm(term: string, lang: Lang): string {
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLang] = useState<Lang>("es");
   useEffect(() => {
     try {
       const saved = localStorage.getItem("merchango.lang");

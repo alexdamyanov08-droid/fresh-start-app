@@ -8,10 +8,10 @@ import dropHero from "@/assets/drop-hero.jpg";
 export const Route = createFileRoute("/drop")({
   head: () => ({
     meta: [
-      { title: "Drop 01 — Merchango" },
-      { name: "description", content: "The first Merchango drop. Coming soon." },
-      { property: "og:title", content: "Drop 01 — Merchango" },
-      { property: "og:description", content: "The first Merchango drop. Coming soon." },
+      { title: "Drop 01 — Xprint Wear" },
+      { name: "description", content: "The first Xprint Wear drop. Coming soon." },
+      { property: "og:title", content: "Drop 01 — Xprint Wear" },
+      { property: "og:description", content: "The first Xprint Wear drop. Coming soon." },
     ],
   }),
   component: Drop,
@@ -24,7 +24,7 @@ function Drop() {
   const copy = lang === "es" ? {
     kicker: "Drop 01",
     title: "Muy pronto.",
-    sub: "El primer drop de Merchango está en camino. Regístrate abajo para ser el primero en enterarte.",
+    sub: "El primer drop de Xprint Wear está en camino. Regístrate abajo para ser el primero en enterarte.",
     discountsTitle: "Sin descuentos disponibles",
     discountsSub: "No hay descuentos activos por el momento.",
     comingSoon: "Muy pronto",
@@ -33,7 +33,7 @@ function Drop() {
   } : {
     kicker: "Drop 01",
     title: "Coming soon.",
-    sub: "The first Merchango drop is on its way. Sign up below to be the first to know.",
+    sub: "The first Xprint Wear drop is on its way. Sign up below to be the first to know.",
     discountsTitle: "No discounts available",
     discountsSub: "No available discounts as of now.",
     comingSoon: "Coming soon",

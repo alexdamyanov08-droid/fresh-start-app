@@ -28,7 +28,7 @@ export function CartDrawer() {
                 <li key={i.id} className="flex gap-3 rounded-lg border border-border bg-card p-3">
                   <div
                     className="h-20 w-20 shrink-0 rounded-md border border-border"
-                    style={{ backgroundColor: i.colorHex }}
+                    style={{ backgroundColor: "#ffffff" }}
                   >
                     {i.image && (
                       <img src={i.image} alt={i.name} className="h-full w-full object-contain mix-blend-multiply" />

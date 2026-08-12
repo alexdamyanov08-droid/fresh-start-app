@@ -27,7 +27,7 @@ function NotFoundComponent() {
         <h1 className="font-display text-7xl uppercase text-foreground">404</h1>
         <h2 className="mt-4 font-display text-xl uppercase text-foreground">Off the grid</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          This page doesn't exist. Head back to Merchango.
+          This page doesn't exist. Head back to Xprint Wear.
         </p>
         <div className="mt-6">
           <a

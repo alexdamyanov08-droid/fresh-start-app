@@ -6,6 +6,7 @@ import { basePriceForVariant, surchargeOf } from "@/lib/pricing";
 export type DesignElement = {
   id: string;
   kind: "image" | "text";
+  view: "front" | "back" | "left" | "right"; // perspectiva de la prenda a la que pertenece este elemento
   image?: string | null;
   text?: string | null;
   font?: string | null;

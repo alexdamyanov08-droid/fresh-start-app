@@ -11,8 +11,8 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/account")({
   head: () => ({
     meta: [
-      { title: "Account — Merchango" },
-      { name: "description", content: "Your Merchango account: orders, status, and saved designs." },
+      { title: "Account — Xprint Wear" },
+      { name: "description", content: "Your Xprint Wear account: orders, status, and saved designs." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -88,7 +88,7 @@ function AccountPage() {
                 {initial}
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Merchango member</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Xprint Wear member</p>
                 <h1 className="mt-1 font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl">
                   {user.email?.split("@")[0]}
                 </h1>
@@ -171,7 +171,7 @@ function AccountPage() {
                       <li key={i.id} className="flex gap-3 px-5 py-3">
                         <div
                           className="h-14 w-14 shrink-0 overflow-hidden rounded-md border border-border"
-                          style={{ backgroundColor: i.colorHex }}
+                          style={{ backgroundColor: "#ffffff" }}
                         >
                           {i.image && <img src={i.image} alt={i.name} className="h-full w-full object-contain mix-blend-multiply" />}
                         </div>

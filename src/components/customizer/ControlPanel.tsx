@@ -4,11 +4,13 @@ import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import type { Product, ColorVariant } from "@/data/products";
 import type { DesignElement } from "@/lib/cart-store";
+import type { View } from "@/components/customizer/Viewer";
 import { useI18n } from "@/lib/i18n";
 
 export function ControlPanel(props: {
   product: Product;
   isEdit: boolean;
+  view: View;
   size: string; setSize: (s: string) => void;
   color: ColorVariant; setColor: (c: ColorVariant) => void;
   qty: number; setQty: (n: number) => void;
@@ -104,8 +106,9 @@ export function ControlPanel(props: {
     { key: "royal", label: "Real", cls: "font-royal", family: "var(--font-royal)" },
   ];
 
-  const images = props.elements.filter((el) => el.kind === "image");
-  const texts = props.elements.filter((el) => el.kind === "text");
+  // Solo se listan/editan aquí los logos y textos de la perspectiva activa.
+  const images = props.elements.filter((el) => el.kind === "image" && (el.view ?? "front") === props.view);
+  const texts = props.elements.filter((el) => el.kind === "text" && (el.view ?? "front") === props.view);
 
   return (
     <div className="flex flex-col gap-6">

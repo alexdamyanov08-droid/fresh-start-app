@@ -15,7 +15,7 @@ import { isKidSize } from "@/lib/sizes";
 function lowestTierPrice(sizesList: string[], forKid: boolean, prod: any, colorName: string): number | null {
   const prices = sizesList
     .filter((s) => isKidSize(s) === forKid)
-    .map((s) => getVariant(prod, s, colorName)?.tiers?.t1_10)
+    .map((s) => getVariant(prod, s, colorName)?.tiers?.t101_plus)
     .filter((n): n is number => typeof n === "number");
   return prices.length ? Math.min(...prices) : null;
 }
@@ -31,15 +31,15 @@ export const Route = createFileRoute("/product/$code")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
-          { title: `${loaderData.name} — Merchango` },
+          { title: `${loaderData.name} — Xprint Wear` },
           { name: "description", content: `Customize the ${loaderData.name}. ${loaderData.desc}` },
-          { property: "og:title", content: `${loaderData.name} — Merchango` },
+          { property: "og:title", content: `${loaderData.name} — Xprint Wear` },
           { property: "og:description", content: `Customize the ${loaderData.name}.` },
           ...(loaderData.colors[0]?.image
             ? [{ property: "og:image", content: loaderData.colors[0].image }]
             : []),
         ]
-      : [{ title: "Product — Merchango" }],
+      : [{ title: "Product — Xprint Wear" }],
   }),
   component: ProductPage,
   notFoundComponent: NotFoundInline,
@@ -75,6 +75,12 @@ function ProductPage() {
   const [roster, setRoster] = useState<{ id: string; name: string; number: string; size: string }[]>([]);
   const addRosterEntry = (name: string, number: string, sz: string) => {
     if (!name.trim()) return;
+    const usedForSize = roster.filter((r) => r.size === sz).length;
+    const availableForSize = quantities[sz] || 0;
+    if (usedForSize >= availableForSize) {
+      toast.error(`Primero indica la cantidad de la talla ${sz} en la tabla de arriba`);
+      return;
+    }
     setRoster((prev) => [...prev, { id: crypto.randomUUID(), name: name.trim(), number: number.trim(), size: sz }]);
   };
   const removeRosterEntry = (id: string) => setRoster((prev) => prev.filter((r) => r.id !== id));
@@ -89,7 +95,7 @@ function ProductPage() {
 
   const addImage = (dataUrl: string) => {
     const el: DesignElement = {
-      id: crypto.randomUUID(), kind: "image", image: dataUrl,
+      id: crypto.randomUUID(), kind: "image", view, image: dataUrl,
       size: 25, pos: { x: 0, y: -10 },
     };
     setElements((prev) => [...prev, el]);
@@ -98,7 +104,7 @@ function ProductPage() {
 
   const addText = () => {
     const el: DesignElement = {
-      id: crypto.randomUUID(), kind: "text", text: "", font: "brutal", color: "#0a0a0a",
+      id: crypto.randomUUID(), kind: "text", view, text: "", font: "brutal", color: "#0a0a0a",
       size: 24, pos: { x: 0, y: -10 },
     };
     setElements((prev) => [...prev, el]);
@@ -152,18 +158,13 @@ function ProductPage() {
 
   // Suma de unidades elegidas entre todas las tallas (mostrador + nombres de amigos),
   // solo aplica cuando NO se está editando una línea.
-  const totalQtyAllSizes = Object.values(quantities).reduce((s, n) => s + (n || 0), 0) + roster.length;
+  const totalQtyAllSizes = Object.values(quantities).reduce((s, n) => s + (n || 0), 0);
   const totalPriceAllSizes =
     Object.entries(quantities).reduce((sum, [sz, n]) => {
       if (!n) return sum;
       const v = getVariant(p, sz, color.name);
       const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
       return sum + (bp + surcharge) * n;
-    }, 0) +
-    roster.reduce((sum, r) => {
-      const v = getVariant(p, r.size, color.name);
-      const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
-      return sum + (bp + surcharge);
     }, 0);
 
   const totalPrice = isEdit ? unitPrice * qty : totalPriceAllSizes;
@@ -172,18 +173,19 @@ function ProductPage() {
   const breakdown = [
     ...Object.entries(quantities)
       .filter(([, n]) => n > 0)
-      .map(([sz, n]) => {
+      .flatMap(([sz, n]) => {
         const v = getVariant(p, sz, color.name);
         const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
         const unit = bp + surcharge;
-        return { label: sz, qty: n, unit, subtotal: unit * n };
+        const namedForSize = roster.filter((r) => r.size === sz);
+        const genericQty = n - namedForSize.length;
+        const rows: { label: string; qty: number; unit: number; subtotal: number }[] = [];
+        if (genericQty > 0) rows.push({ label: sz, qty: genericQty, unit, subtotal: unit * genericQty });
+        for (const r of namedForSize) {
+          rows.push({ label: `${r.name}${r.number ? " · " + r.number : ""} (${r.size})`, qty: 1, unit, subtotal: unit });
+        }
+        return rows;
       }),
-    ...roster.map((r) => {
-      const v = getVariant(p, r.size, color.name);
-      const bp = v ? basePriceForVariant(v.tiers, qtyAlreadyInCartForRef + totalQtyAllSizes) : p.price;
-      const unit = bp + surcharge;
-      return { label: `${r.name}${r.number ? " · " + r.number : ""} (${r.size})`, qty: 1, unit, subtotal: unit };
-    }),
   ];
 
   const texts = elements.filter((el) => el.kind === "text" && el.text).map((el) => el.text);
@@ -212,28 +214,34 @@ function ProductPage() {
     }
 
     const bulkEntries = Object.entries(quantities).filter(([, n]) => n > 0);
-    if (bulkEntries.length === 0 && roster.length === 0) return;
+    if (bulkEntries.length === 0) return;
     for (const [sz, n] of bulkEntries) {
       const v = getVariant(p, sz, color.name);
-      add({
-        code: p.code, name: p.name, image: color.image, size: sz,
-        colorName: color.name, colorHex: color.hex, qty: n,
-        tiers: v?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
-        elements,
-      });
-    }
-    // Una línea por amigo: mismo diseño, pero con el texto sustituido por su nombre (y número).
-    for (const r of roster) {
-      const v = getVariant(p, r.size, color.name);
-      const personalized = elements.map((el) =>
-        el.kind === "text" ? { ...el, text: `${r.name}${r.number ? " " + r.number : ""}`.toUpperCase() } : el
-      );
-      add({
-        code: p.code, name: p.name, image: color.image, size: r.size,
-        colorName: color.name, colorHex: color.hex, qty: 1,
-        tiers: v?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price },
-        elements: personalized,
-      });
+      const tiers = v?.tiers ?? { t1_10: p.price, t11_30: p.price, t31_100: p.price, t101_plus: p.price };
+      const namedForSize = roster.filter((r) => r.size === sz);
+      const genericQty = n - namedForSize.length;
+      // Unidades de esta talla sin nombre asignado: una sola línea con el diseño genérico.
+      if (genericQty > 0) {
+        add({
+          code: p.code, name: p.name, image: color.image, size: sz,
+          colorName: color.name, colorHex: color.hex, qty: genericQty,
+          tiers,
+          elements,
+        });
+      }
+      // Unidades de esta talla con nombre asignado: una línea de 1 unidad por persona,
+      // con el texto sustituido por su nombre (y número). No suman unidades extra.
+      for (const r of namedForSize) {
+        const personalized = elements.map((el) =>
+          el.kind === "text" ? { ...el, text: `${r.name}${r.number ? " " + r.number : ""}`.toUpperCase() } : el
+        );
+        add({
+          code: p.code, name: p.name, image: color.image, size: r.size,
+          colorName: color.name, colorHex: color.hex, qty: 1,
+          tiers,
+          elements: personalized,
+        });
+      }
     }
     toast.success(t("added"), { description: summary });
     setQuantities({});
@@ -280,6 +288,7 @@ function ProductPage() {
           breakdown={breakdown}
           priceGroups={priceGroups}
           elements={elements}
+          view={view}
           selectedId={selectedId} setSelectedId={setSelectedId}
           addImage={addImage} addText={addText}
           updateElement={updateElement} removeElement={removeElement}

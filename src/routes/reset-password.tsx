@@ -7,8 +7,8 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "Reset password — Merchango" },
-      { name: "description", content: "Set a new password for your Merchango account." },
+      { title: "Reset password — Xprint Wear" },
+      { name: "description", content: "Set a new password for your Xprint Wear account." },
     ],
   }),
   component: ResetPasswordPage,
@@ -35,7 +35,7 @@ function ResetPasswordPage() {
   return (
     <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md items-center px-4 py-10 sm:px-6">
       <div className="w-full rounded-2xl border border-border bg-card p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Merchango</p>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Xprint Wear</p>
         <h1 className="mt-1 font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl">
           {t("reset_title")}
         </h1>

@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { CheckCircle2, Mail, Package, Sparkles } from "lucide-react";
+import { useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useCart } from "@/lib/cart-store";
 import { z } from "zod";
 
 const searchSchema = z.object({ order: z.string().optional() });
@@ -10,10 +12,10 @@ export const Route = createFileRoute("/thanks")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({
     meta: [
-      { title: "Thank you — Merchango" },
-      { name: "description", content: "Your Merchango order is confirmed. Custom pieces are entering production." },
-      { property: "og:title", content: "Thank you — Merchango" },
-      { property: "og:description", content: "Your Merchango order is confirmed." },
+      { title: "Thank you — Xprint Wear" },
+      { name: "description", content: "Your Xprint Wear order is confirmed. Custom pieces are entering production." },
+      { property: "og:title", content: "Thank you — Xprint Wear" },
+      { property: "og:description", content: "Your Xprint Wear order is confirmed." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
@@ -25,7 +27,14 @@ export const Route = createFileRoute("/thanks")({
 function ThanksPage() {
   const { t } = useI18n();
   const { order } = Route.useSearch();
-  const num = order || "MRC-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const { clear } = useCart();
+  const num = order || "XPW-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+  useEffect(() => {
+    if (order) clear();
+    // Solo al llegar con un numero de pedido real (pago confirmado por Stripe).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order]);
 
   return (
     <main className="relative overflow-hidden">
@@ -43,7 +52,7 @@ function ThanksPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-xs uppercase tracking-[0.4em] text-muted-foreground"
         >
-          Merchango
+          Xprint Wear
         </motion.p>
 
         <motion.div
@@ -117,7 +126,7 @@ function ThanksPage() {
         </motion.div>
 
         <p className="mt-16 font-display text-2xl uppercase tracking-tight text-muted-foreground/60">
-          MERCH<span className="text-holo">·</span>ANGO
+          XPRINT<span className="text-holo">·</span>WEAR
         </p>
       </div>
     </main>

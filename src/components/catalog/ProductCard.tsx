@@ -13,14 +13,14 @@ export function ProductCard({ p, i }: { p: Product; i: number }) {
   const fromPriceKid = (() => {
     const prices = p.sizes
       .filter((s) => isKidSize(s))
-      .map((s) => getVariant(p, s, colorNameForPrice)?.tiers?.t1_10)
+      .map((s) => getVariant(p, s, colorNameForPrice)?.tiers?.t101_plus)
       .filter((n): n is number => typeof n === "number");
     return prices.length ? Math.min(...prices) : null;
   })();
   const fromPriceAdult = (() => {
     const prices = p.sizes
       .filter((s) => !isKidSize(s))
-      .map((s) => getVariant(p, s, colorNameForPrice)?.tiers?.t1_10)
+      .map((s) => getVariant(p, s, colorNameForPrice)?.tiers?.t101_plus)
       .filter((n): n is number => typeof n === "number");
     return prices.length ? Math.min(...prices) : null;
   })();
@@ -53,7 +53,7 @@ export function ProductCard({ p, i }: { p: Product; i: number }) {
         </div>
         <div className="flex flex-col gap-1 p-4">
           <p translate="no" className="notranslate truncate font-display text-lg uppercase leading-tight">{p.name}</p>
-          <p className="line-clamp-1 text-xs text-muted-foreground">{tr(p.category)}</p>
+          <p className="line-clamp-1 text-xs text-muted-foreground">{p.desc}</p>
           <div className="mt-2 flex items-center justify-between">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
               {fromPriceKid != null && (

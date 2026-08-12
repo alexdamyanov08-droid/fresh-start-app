@@ -4,18 +4,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Lock, ShieldCheck, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart-store";
-import { useOrders } from "@/lib/orders-store";
 import { useAuth } from "@/lib/auth-context";
 import { useI18n } from "@/lib/i18n";
+import { supabase } from "@/integrations/supabase/client";
 
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout — Merchango" },
-      { name: "description", content: "Secure checkout for your Merchango custom pieces." },
-      { property: "og:title", content: "Checkout — Merchango" },
-      { property: "og:description", content: "Secure checkout for your Merchango custom pieces." },
+      { title: "Checkout — Xprint Wear" },
+      { name: "description", content: "Secure checkout for your Xprint Wear custom pieces." },
+      { property: "og:title", content: "Checkout — Xprint Wear" },
+      { property: "og:description", content: "Secure checkout for your Xprint Wear custom pieces." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
@@ -26,8 +26,7 @@ export const Route = createFileRoute("/checkout")({
 
 function CheckoutPage() {
   const { t } = useI18n();
-  const { items, total, clear, unitPrice } = useCart();
-  const { addOrder } = useOrders();
+  const { items, total, unitPrice } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
@@ -37,25 +36,46 @@ function CheckoutPage() {
   const tax = Math.round(total * 0.08 * 100) / 100;
   const grand = total + shipping + tax;
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!items.length) return;
+    if (!items.length || busy) return;
     setBusy(true);
-    const orderNumber = "MRC-" + Math.random().toString(36).slice(2, 8).toUpperCase();
-    const snapshot = items;
-    setTimeout(() => {
-      addOrder({
-        number: orderNumber,
-        items: snapshot,
-        subtotal: total,
-        shipping,
-        tax,
-        total: grand,
-        userEmail: user?.email ?? null,
+
+    const form = new FormData(e.currentTarget);
+    const customerEmail = String(form.get("email") || "").trim();
+    const customerPhone = String(form.get("phone") || "").trim();
+    const customerName = String(form.get("name") || "").trim();
+    const shippingAddress = {
+      address: String(form.get("address") || "").trim(),
+      city: String(form.get("city") || "").trim(),
+      postal: String(form.get("postal") || "").trim(),
+      country: String(form.get("country") || "").trim(),
+    };
+
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+        body: {
+          items,
+          subtotal: total,
+          shipping,
+          tax,
+          total: grand,
+          customerEmail: customerEmail || user?.email || null,
+          customerName,
+          customerPhone,
+          shippingAddress,
+          origin: window.location.origin,
+        },
       });
-      clear();
-      navigate({ to: "/thanks", search: { order: orderNumber } });
-    }, 1100);
+
+      if (error) throw error;
+      if (!data?.url) throw new Error("No se ha recibido la URL de pago");
+
+      window.location.href = data.url;
+    } catch (err) {
+      setBusy(false);
+      toast.error(err instanceof Error ? err.message : "No se pudo iniciar el pago");
+    }
   };
 
 
@@ -91,7 +111,7 @@ function CheckoutPage() {
         </button>
 
         <div className="mb-10">
-          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Merchango</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Xprint Wear</p>
           <h1 className="mt-2 font-display text-4xl uppercase leading-none tracking-tight sm:text-5xl">
             {t("checkout_title")} <span className="text-holo">.</span>
           </h1>
@@ -102,7 +122,7 @@ function CheckoutPage() {
           {/* Left: form */}
           <div className="space-y-8">
             <Section title={t("contact_info")}>
-              <Field label={t("email")} name="email" type="email" required placeholder="you@merchango.es" />
+              <Field label={t("email")} name="email" type="email" required placeholder="tucorreo@ejemplo.com" />
               <Field label={t("phone")} name="phone" type="tel" placeholder="+34 600 000 000" />
             </Section>
 
@@ -227,7 +247,7 @@ function CheckoutPage() {
                   <li key={i.id} className="flex gap-3 px-5 py-4">
                     <div
                       className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-border"
-                      style={{ backgroundColor: i.colorHex }}
+                      style={{ backgroundColor: "#ffffff" }}
                     >
                       {i.image && (
                         <img src={i.image} alt={i.name} className="h-full w-full object-contain mix-blend-multiply" />
@@ -283,7 +303,7 @@ function CheckoutPage() {
                     : t("place_order")}
                 </button>
                 <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-                  <Lock className="h-3 w-3" /> Secure · encrypted · Merchango
+                  <Lock className="h-3 w-3" /> Secure · encrypted · Xprint Wear
                 </p>
               </div>
             </motion.div>

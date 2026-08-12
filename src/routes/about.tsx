@@ -8,9 +8,9 @@ import contactHero from "@/assets/contact-hero.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About & Contact — Merchango" },
+      { title: "About & Contact — Xprint Wear" },
       { name: "description", content: "Tell us your idea. We help brands, events and companies create custom merchandise." },
-      { property: "og:title", content: "About & Contact — Merchango" },
+      { property: "og:title", content: "About & Contact — Xprint Wear" },
       { property: "og:description", content: "Tell us your idea. We help brands, events and companies create custom merchandise." },
     ],
   }),
@@ -25,7 +25,7 @@ function About() {
     kicker: "Nosotros",
     title1: "Diseñado por ti,",
     title2: "hecho por nosotros.",
-    lead: "Merchango es un estudio de merchandising personalizado. Ayudamos a marcas, eventos y empresas a crear piezas únicas — desde una sola muestra hasta miles de unidades.",
+    lead: "Xprint Wear es un estudio de merchandising personalizado. Ayudamos a marcas, eventos y empresas a crear piezas únicas — desde una sola muestra hasta miles de unidades.",
     stat1: "150+", stat1l: "Piezas base",
     stat2: "24h", stat2l: "Respuesta media",
     stat3: "100%", stat3l: "Personalizable",
@@ -53,7 +53,7 @@ function About() {
     kicker: "About us",
     title1: "Designed by you,",
     title2: "made by us.",
-    lead: "Merchango is a custom merchandise studio. We help brands, events and companies create unique pieces — from a single sample to thousands of units.",
+    lead: "Xprint Wear is a custom merchandise studio. We help brands, events and companies create unique pieces — from a single sample to thousands of units.",
     stat1: "150+", stat1l: "Base pieces",
     stat2: "24h", stat2l: "Avg. response",
     stat3: "100%", stat3l: "Customizable",

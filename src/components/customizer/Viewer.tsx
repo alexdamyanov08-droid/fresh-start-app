@@ -35,7 +35,10 @@ export function Viewer(props: {
   const halfSize = (el: DesignElement) => (el.kind === "image" ? el.size / 2 : 10);
   const clamp = (el: DesignElement, v: number) => Math.max(-45 + halfSize(el), Math.min(45 - halfSize(el), v));
 
-  const selected = props.elements.find((el) => el.id === props.selectedId) ?? null;
+  // Solo los elementos (logos/textos) que pertenecen a la perspectiva activa.
+  // El fallback a "front" mantiene compatible los diseños guardados antes de este cambio.
+  const visibleElements = props.elements.filter((el) => (el.view ?? "front") === props.view);
+  const selected = visibleElements.find((el) => el.id === props.selectedId) ?? null;
 
   useEffect(() => {
     if (!selected) return;
@@ -196,7 +199,7 @@ export function Viewer(props: {
             )}
 
             {/* Design elements for this view */}
-            {props.elements.map((el) => {
+            {visibleElements.map((el) => {
               const isSelected = el.id === props.selectedId;
               const textPx = el.size * 1.8;
               return (
