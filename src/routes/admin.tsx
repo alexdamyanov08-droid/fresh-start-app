@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Package, TrendingUp, Clock, Truck, RefreshCw } from "lucide-react";
+import { Download, Package, TrendingUp, Clock, Truck, RefreshCw, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
 import { useIsAdmin } from "@/lib/admin";
@@ -30,6 +30,7 @@ type AdminOrder = {
   customer_name: string | null;
   customer_phone: string | null;
   shipping_address: Record<string, unknown> | null;
+  invoice_data: { companyName?: string; taxId?: string; address?: string } | null;
   items: CartItem[];
   subtotal: number;
   shipping: number;
@@ -130,7 +131,11 @@ function AdminPage() {
   };
 
   const exportCsv = () => {
-    const headers = ["Nº pedido", "Fecha", "Cliente", "Email", "Teléfono", "Estado", "Subtotal", "Envío", "Impuestos", "Total"];
+    const headers = [
+      "Nº pedido", "Fecha", "Cliente", "Email", "Teléfono", "Estado",
+      "Subtotal", "Envío", "Impuestos", "Total",
+      "Razón social", "CIF/NIF", "Dirección fiscal",
+    ];
     const rows = filtered.map((o) => [
       o.order_number,
       new Date(o.created_at).toLocaleString("es-ES"),
@@ -142,6 +147,9 @@ function AdminPage() {
       Number(o.shipping).toFixed(2),
       Number(o.tax).toFixed(2),
       Number(o.total).toFixed(2),
+      o.invoice_data?.companyName ?? "",
+      o.invoice_data?.taxId ?? "",
+      o.invoice_data?.address ?? "",
     ]);
     const csv = [headers, ...rows].map((r) => r.map(csvCell).join(",")).join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
@@ -280,6 +288,14 @@ function AdminPage() {
                   <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-widest ${STATUS_CLS[o.status]}`}>
                     {STATUS_LABEL[o.status]}
                   </span>
+                  {o.invoice_data && (
+                    <span
+                      title="Necesita factura"
+                      className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-widest text-amber-700 dark:text-amber-300"
+                    >
+                      <FileText className="h-3 w-3" /> Factura
+                    </span>
+                  )}
                   <p className="w-24 text-right font-semibold">€{Number(o.total).toFixed(2)}</p>
                 </div>
 
@@ -307,6 +323,16 @@ function AdminPage() {
                       <p className="mb-3 text-xs text-muted-foreground">
                         Envío: {Object.values(o.shipping_address).filter(Boolean).join(", ")}
                       </p>
+                    )}
+                    {o.invoice_data && (
+                      <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs">
+                        <p className="mb-1 font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                          Factura solicitada
+                        </p>
+                        {o.invoice_data.companyName && <p>Razón social: {o.invoice_data.companyName}</p>}
+                        {o.invoice_data.taxId && <p>CIF/NIF: {o.invoice_data.taxId}</p>}
+                        {o.invoice_data.address && <p>Dirección fiscal: {o.invoice_data.address}</p>}
+                      </div>
                     )}
 
                     <ul className="divide-y divide-border rounded-lg border border-border bg-card">

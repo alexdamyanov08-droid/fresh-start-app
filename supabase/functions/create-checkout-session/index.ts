@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     const {
       items, subtotal, shipping, tax, total,
       customerEmail, customerName, customerPhone,
-      shippingAddress, origin,
+      shippingAddress, invoiceData, origin,
     } = body;
 
     if (!items?.length || !total || !origin) {
@@ -51,6 +51,7 @@ Deno.serve(async (req) => {
       customer_name: customerName ?? null,
       customer_phone: customerPhone ?? null,
       shipping_address: shippingAddress ?? null,
+      invoice_data: invoiceData ?? null,
       items,
       subtotal, shipping, tax, total,
     });
@@ -58,7 +59,6 @@ Deno.serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
       customer_email: customerEmail || undefined,
       line_items: [
         {

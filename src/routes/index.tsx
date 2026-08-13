@@ -14,10 +14,10 @@ export const Route = createFileRoute("/")({
 });
 
 const CATEGORIES = [
-  { label: "Camisetas", img: "/camiseta.jpg" },
-  { label: "Sudaderas", img: "/sudadera.png" },
-  { label: "Polos", img: "/polo.png" },
-  { label: "Softshells", img: "/softshell.jpg" },
+  { label: "Camisetas", img: "/camiseta.jpg", categoryKey: "camisetas" },
+  { label: "Sudaderas", img: "/sudadera.png", categoryKey: "sudaderas" },
+  { label: "Polos", img: "/polo.png", categoryKey: "polos" },
+  { label: "Cazadoras", img: "/softshell.jpg", categoryKey: "cazadoras-parkas" },
 ];
 
 const FEATURES = [
@@ -106,6 +106,7 @@ function Home() {
               <Link
                 key={c.label}
                 to="/shop"
+                search={{ category: c.categoryKey }}
                 className="group flex flex-col overflow-hidden rounded-2xl bg-background shadow-sm ring-1 ring-border transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="aspect-square overflow-hidden bg-sand">
